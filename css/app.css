@@ -1,9 +1,32 @@
-#map {
-  height: 100%;
-}
-
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+.main.container {
+  height: calc(100vh - 72px);
+}
+
+.main.row {
+  height: 100%;
+}
+
+.sidebar {
+  display: none;
+  height: 100%;
+}
+@media (min-width: 768px) {
+  .sidebar {
+    display: block;
+    background-color: #f5f5f5;
+  }
+}
+
+.map-container {
+  height: 100%;
+}
+
+#map {
+  height: 100%;
 }
