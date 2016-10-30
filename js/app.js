@@ -49,6 +49,7 @@ var ViewModel = function() {
   var self = this;
 
   this.locations = ko.observableArray([]);
+  this.markers = [];
   coordinates.forEach(function(coordinate) {
     self.locations().push(new Location(coordinate));
   });
@@ -65,6 +66,36 @@ var ViewModel = function() {
       });
     });
   };
+
+  this.updateMarker = function() {
+    // The following group uses the location array to create an array of markers on initialize.
+    self.locations().forEach(function(location) {
+      var position = {lat: location.lat(), lng: location.lng()};
+      var title = location.displayName();
+      var id = self.locations().indexOf(location);
+
+      var marker = new google.maps.Marker({
+        position: position,
+        title: title,
+        animation: google.maps.Animation.DROP,
+        id: id
+      });
+
+      location.displayName.subscribe(function(newValue) {
+        marker.title = newValue;
+      });
+
+      self.markers.push(marker);
+    });
+
+    var bounds = new google.maps.LatLngBounds();
+    // Extend the boundaries of the map for each marker and display the marker
+    for (var i = 0; i < self.markers.length; i++) {
+      self.markers[i].setMap(map);
+      bounds.extend(self.markers[i].position);
+    }
+    map.fitBounds(bounds);
+  };
 };
 
 viewModel = new ViewModel();
@@ -78,4 +109,5 @@ function initMap() {
 
   geocoder = new google.maps.Geocoder;
   viewModel.updateDisplayName();
+  viewModel.showMarker();
 }
