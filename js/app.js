@@ -67,7 +67,7 @@ var ViewModel = function() {
     });
   };
 
-  this.updateMarker = function() {
+  this.showMarker = function() {
     // The following group uses the location array to create an array of markers on initialize.
     self.locations().forEach(function(location) {
       var position = {lat: location.lat(), lng: location.lng()};
