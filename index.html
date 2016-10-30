@@ -26,7 +26,25 @@
       <div class="col-xs-12 col-sm-9 map-container">
         <div id="map"></div>
       </div>
-      <div class="col-xs-6 col-sm-3 sidebar"></div>
+      <div class="col-xs-6 col-sm-3 sidebar">
+        <!-- The filter -->
+        <!-- TODO: implemention the form submit handler -->
+        <form>
+        <div class="input-group">
+          <input type="text" class="form-control">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">Filter</button>
+          </span>
+        </div>
+      </form>
+      <!-- The list of neighbourhood -->
+      <!-- TODO: implement the click handler -->
+      <ul data-bind="foreach: locations">
+        <li>
+           <span data-bind="text: coordinate"></span>
+         </li>
+      </ul>
+      </div>
     </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
