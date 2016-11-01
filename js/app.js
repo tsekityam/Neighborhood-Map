@@ -2,35 +2,6 @@ var map;
 var geocoder;
 var viewModel;
 
-// Neighbourhood are saved as coordinates
-var coordinates = [
-  {
-    // Hong Kong Disneyland
-    lat: 22.3130,
-    lng: 114.0413
-  },
-  {
-    // Ocean Park Hong Kong
-    lat: 22.2467,
-    lng: 114.1757
-  },
-  {
-    // Victoria Peak
-    lat: 22.2759,
-    lng: 114.1455
-  },
-  {
-    // The Big Buddha
-    lat: 22.2540,
-    lng: 113.9050
-  },
-  {
-    // Lion Rock
-    lat: 22.3523,
-    lng: 114.1870
-  }
-];
-
 var Location = function(coordinate) {
   var self = this;
 
@@ -50,8 +21,18 @@ var ViewModel = function() {
 
   this.locations = ko.observableArray([]);
   this.markers = [];
-  coordinates.forEach(function(coordinate) {
-    self.locations().push(new Location(coordinate));
+
+  $.ajax({
+    url: "locations.json",
+    method: 'GET',
+  }).done(function(result) {
+    var coordinates = result.coordinates;
+
+    coordinates.forEach(function(coordinate) {
+      self.locations.push(new Location(coordinate));
+    });
+  }).fail(function(err) {
+    console.log("fail to get locations.");
   });
 
   this.updateDisplayName = function() {
