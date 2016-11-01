@@ -35,7 +35,7 @@ var ViewModel = function() {
     console.log("fail to get locations.");
   });
 
-  this.updateDisplayName = function() {
+  this.updateDisplayNames = function() {
     self.locations().forEach(function(location) {
       var latlng = {lat: location.lat(), lng: location.lng()};
       geocoder.geocode({'location': latlng}, function(results, status) {
@@ -48,7 +48,7 @@ var ViewModel = function() {
     });
   };
 
-  this.showMarker = function() {
+  this.showMarkers = function() {
     // The following group uses the location array to create an array of markers on initialize.
     self.locations().forEach(function(location) {
       var position = {lat: location.lat(), lng: location.lng()};
@@ -89,6 +89,6 @@ function initMap() {
   });
 
   geocoder = new google.maps.Geocoder;
-  viewModel.updateDisplayName();
-  viewModel.showMarker();
+  viewModel.updateDisplayNames();
+  viewModel.showMarkers();
 }
