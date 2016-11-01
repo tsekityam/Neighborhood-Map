@@ -22,20 +22,18 @@ var ViewModel = function() {
   this.locations = ko.observableArray([]);
   this.markers = [];
 
-  this.loadLocations = function() {
-    $.ajax({
-      url: "locations.json",
-      method: 'GET',
-    }).done(function(result) {
-      var coordinates = result.coordinates;
+  $.ajax({
+    url: "locations.json",
+    method: 'GET',
+  }).done(function(result) {
+    var coordinates = result.coordinates;
 
-      coordinates.forEach(function(coordinate) {
-        self.locations.push(new Location(coordinate));
-      });
-    }).fail(function(err) {
-      console.log("fail to get locations.");
+    coordinates.forEach(function(coordinate) {
+      self.locations.push(new Location(coordinate));
     });
-  }
+  }).fail(function(err) {
+    console.log("fail to get locations.");
+  });
 
   this.updateDisplayNames = function() {
     self.locations().forEach(function(location) {
