@@ -20,7 +20,9 @@ var ViewModel = function() {
   var self = this;
 
   this.locations = ko.observableArray([]);
-  this.markers = [];
+
+  this.locationToMarkerMappings = [];  // location to marker mappings
+  this.bounds;
 
   $.ajax({
     url: "locations.json",
@@ -35,7 +37,7 @@ var ViewModel = function() {
     console.log("fail to get locations.");
   });
 
-  this.updateDisplayNames = function() {
+  this.updateDisplayName = function(location) {
     self.locations().forEach(function(location) {
       var latlng = {lat: location.lat(), lng: location.lng()};
       geocoder.geocode({'location': latlng}, function(results, status) {
@@ -48,34 +50,54 @@ var ViewModel = function() {
     });
   };
 
-  this.showMarkers = function() {
-    // The following group uses the location array to create an array of markers on initialize.
-    self.locations().forEach(function(location) {
-      var position = {lat: location.lat(), lng: location.lng()};
-      var title = location.displayName();
-      var id = self.locations().indexOf(location);
-
-      var marker = new google.maps.Marker({
-        position: position,
-        title: title,
-        animation: google.maps.Animation.DROP,
-        id: id
-      });
-
-      location.displayName.subscribe(function(newValue) {
-        marker.title = newValue;
-      });
-
-      self.markers.push(marker);
-    });
-
-    var bounds = new google.maps.LatLngBounds();
-    // Extend the boundaries of the map for each marker and display the marker
-    for (var i = 0; i < self.markers.length; i++) {
-      self.markers[i].setMap(map);
-      bounds.extend(self.markers[i].position);
+  this.updateMarkers = function() {
+    // do nothing if Googl Maps API is not ready
+    if (map === undefined) {
+      return;
     }
-    map.fitBounds(bounds);
+
+    if (self.bounds === undefined) {
+      self.bounds = new google.maps.LatLngBounds();
+    }
+
+    self.locations().forEach(function(location){
+      var mappingExists = false;
+      for (var i = 0; i < self.locationToMarkerMappings.length; i++) {
+        var mapping = self.locationToMarkerMappings[i];
+        if (mapping.location === location) {
+          mappingExists = true;
+          break;
+        }
+      }
+
+      if (!mappingExists) {
+        self.updateDisplayName(location);
+
+        var position = {lat: location.lat(), lng: location.lng()};
+        var title = location.displayName();
+        var id = self.locationToMarkerMappings.length;
+
+        var marker = new google.maps.Marker({
+          position: position,
+          title: title,
+          animation: google.maps.Animation.DROP,
+          id: id
+        });
+
+        location.displayName.subscribe(function(newValue) {
+          marker.title = newValue;
+        });
+
+        self.locationToMarkerMappings.push({location: location, marker: marker});
+
+        // Display the new marker
+        marker.setMap(map);
+
+        // Extend the boundaries of the map for the new marker
+        self.bounds.extend(marker.position);
+        map.fitBounds(self.bounds);
+      }
+    });
   };
 };
 
@@ -89,6 +111,12 @@ function initMap() {
   });
 
   geocoder = new google.maps.Geocoder;
-  viewModel.updateDisplayNames();
-  viewModel.showMarkers();
+
+  // add marker of all exist locations
+  viewModel.updateMarkers();
+
+  // update markers if there is anything added or removed from location list
+  viewModel.locations.subscribe(function(locations) {
+    viewModel.updateMarkers();
+  });
 }
