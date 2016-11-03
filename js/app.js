@@ -72,6 +72,8 @@ var ViewModel = function() {
 
       if (!mappingExists) {
         self.addMarker(location);
+      } else {
+        self.showMarker(mapping.marker);
       }
     });
 
@@ -118,6 +120,11 @@ var ViewModel = function() {
     self.bounds.extend(marker.position);
     map.fitBounds(self.bounds);
   };
+
+  // show specified marker on the map
+  this.showMarker = function(marker) {
+    marker.setMap(map);
+  }
 
   // Hide specified marker from the map
   this.hideMarker = function(marker) {
