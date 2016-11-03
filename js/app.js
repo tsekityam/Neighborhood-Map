@@ -74,6 +74,21 @@ var ViewModel = function() {
         self.addMarker(location);
       }
     });
+
+    self.locationToMarkerMappings.forEach(function(mapping) {
+      var locationExists = false;
+      for (var i = 0; i < self.locations().length; i++) {
+        var location = self.locations()[i];
+        if (location === mapping.location) {
+          locationExists = true;
+          break;
+        }
+      }
+
+      if (!locationExists) {
+        self.hideMarker(mapping.marker);
+      }
+    });
   };
 
   this.addMarker = function(location) {
@@ -103,6 +118,11 @@ var ViewModel = function() {
     self.bounds.extend(marker.position);
     map.fitBounds(self.bounds);
   };
+
+  // Hide specified marker from the map
+  this.hideMarker = function(marker) {
+    marker.setMap(null);
+  }
 };
 
 viewModel = new ViewModel();
