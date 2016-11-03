@@ -71,33 +71,37 @@ var ViewModel = function() {
       }
 
       if (!mappingExists) {
-        self.updateDisplayName(location);
-
-        var position = {lat: location.lat(), lng: location.lng()};
-        var title = location.displayName();
-        var id = self.locationToMarkerMappings.length;
-
-        var marker = new google.maps.Marker({
-          position: position,
-          title: title,
-          animation: google.maps.Animation.DROP,
-          id: id
-        });
-
-        location.displayName.subscribe(function(newValue) {
-          marker.title = newValue;
-        });
-
-        self.locationToMarkerMappings.push({location: location, marker: marker});
-
-        // Display the new marker
-        marker.setMap(map);
-
-        // Extend the boundaries of the map for the new marker
-        self.bounds.extend(marker.position);
-        map.fitBounds(self.bounds);
+        self.addMarker(location);
       }
     });
+  };
+
+  this.addMarker = function(location) {
+    self.updateDisplayName(location);
+
+    var position = {lat: location.lat(), lng: location.lng()};
+    var title = location.displayName();
+    var id = self.locationToMarkerMappings.length;
+
+    var marker = new google.maps.Marker({
+      position: position,
+      title: title,
+      animation: google.maps.Animation.DROP,
+      id: id
+    });
+
+    location.displayName.subscribe(function(newValue) {
+      marker.title = newValue;
+    });
+
+    self.locationToMarkerMappings.push({location: location, marker: marker});
+
+    // Display the new marker
+    marker.setMap(map);
+
+    // Extend the boundaries of the map for the new marker
+    self.bounds.extend(marker.position);
+    map.fitBounds(self.bounds);
   };
 };
 
