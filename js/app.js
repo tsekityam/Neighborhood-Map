@@ -154,6 +154,11 @@ var ViewModel = function() {
     var position = {lat: location.lat(), lng: location.lng()};
     var title = location.displayName();
     var id = self.locationToMarkerMappings.length;
+    var description = location.description();
+
+    var infowindow = new google.maps.InfoWindow({
+      content: description
+    });
 
     var marker = new google.maps.Marker({
       position: position,
@@ -161,9 +166,15 @@ var ViewModel = function() {
       animation: google.maps.Animation.DROP,
       id: id
     });
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
 
     location.displayName.subscribe(function(newValue) {
       marker.title = newValue;
+    });
+    location.description.subscribe(function(newValue) {
+      infowindow.setContent(newValue);
     });
 
     self.locationToMarkerMappings.push({location: location, marker: marker});
@@ -174,6 +185,11 @@ var ViewModel = function() {
     // Extend the boundaries of the map for the new marker
     self.bounds.extend(marker.position);
     map.fitBounds(self.bounds);
+  };
+
+  this.showInfoWindow = function(location) {
+    var marker = self.getMarker(location);
+    new google.maps.event.trigger( marker, 'click' );
   };
 
   // show specified marker on the map
@@ -204,5 +220,13 @@ function initMap() {
   // update markers if there is anything added or removed from location list
   viewModel.locations.subscribe(function(locations) {
     viewModel.updateMarkers();
+  });
+}
+
+function showInfoWindow(displayName) {
+  viewModel.locations().forEach(function (location) {
+    if (location.displayName() === displayName) {
+      viewModel.showInfoWindow(location);
+    }
   });
 }
