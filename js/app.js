@@ -14,15 +14,21 @@ var Location = function(coordinate) {
     (this.lng() < 0 ? "° W" : "° E");
   }, this);
   this.displayName = ko.observable(this.coordinate());
+  this.visibility = ko.observable(true);
 };
 
 var ViewModel = function() {
   var self = this;
 
   this.locations = ko.observableArray([]);
+  this.filter = ko.observable("");
 
   this.locationToMarkerMappings = [];  // location to marker mappings
   this.bounds;
+
+  this.filter.subscribe(function(newValue) {
+    self.updateLocationVisibilities()
+  });
 
   $.ajax({
     url: "locations.json",
@@ -35,6 +41,29 @@ var ViewModel = function() {
     });
   }).fail(function(err) {
     console.log("fail to get locations.");
+  });
+
+  this.updateLocationVisibilities = function() {
+    var filter = self.filter().toLocaleUpperCase();
+    self.locations().forEach(function(location) {
+      var displayName = location.displayName().toLocaleUpperCase();
+      location.visibility(displayName.includes(filter));
+
+      var marker = self.getMarker(location);
+      if (marker !== undefined) {
+        if (location.visibility() === true) {
+          self.showMarker(marker);
+        } else {
+          self.hideMarker(marker);
+        }
+      }
+    });
+  };
+
+  this.locations().forEach(function(location) {
+    location.displayName.subscribe(function(newValue) {
+      self.updateLocationVisibilities();
+    });
   });
 
   this.updateDisplayName = function(location) {
@@ -50,6 +79,17 @@ var ViewModel = function() {
     });
   };
 
+  this.getMarker = function(location) {
+    for (var i = 0; i < self.locationToMarkerMappings.length; i++) {
+      var mapping = self.locationToMarkerMappings[i];
+      if (mapping.location === location) {
+        return mapping.marker;
+      }
+    }
+
+    return undefined;
+  };
+
   this.updateMarkers = function() {
     // do nothing if Googl Maps API is not ready
     if (map === undefined) {
@@ -61,19 +101,9 @@ var ViewModel = function() {
     }
 
     self.locations().forEach(function(location){
-      var mappingExists = false;
-      for (var i = 0; i < self.locationToMarkerMappings.length; i++) {
-        var mapping = self.locationToMarkerMappings[i];
-        if (mapping.location === location) {
-          mappingExists = true;
-          break;
-        }
-      }
-
-      if (!mappingExists) {
+      var marker = self.getMarker(location);
+      if (marker === undefined) {
         self.addMarker(location);
-      } else {
-        self.showMarker(mapping.marker);
       }
     });
 

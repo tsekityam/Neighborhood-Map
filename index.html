@@ -29,12 +29,11 @@
       </div>
       <div class="col-xs-6 col-sm-3 sidebar sidebar-offcanvas">
       <!-- The filter -->
-      <!-- TODO: implemention the form submit handler -->
-      <input type="text" class="form-control">
+      <input type="text" placeholder="Search" class="form-control" data-bind="value:filter, valueUpdate:'input'">
       <!-- The list of neighbourhood -->
       <!-- TODO: implement the click handler -->
       <ul data-bind="foreach: locations">
-        <li>
+        <li data-bind="style: { display: visibility() === true ? 'list-item' : 'none' }">
            <span data-bind="text: displayName"></span>
          </li>
       </ul>
