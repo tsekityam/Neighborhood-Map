@@ -72,7 +72,7 @@ var ViewModel = function() {
       geocoder.geocode({'location': latlng}, function(results, status) {
         if (status === 'OK') {
           if (results[1]) {
-            location.displayName(results[1].formatted_address);
+            location.displayName(results[1].address_components[0].short_name);
           }
         }
       });
