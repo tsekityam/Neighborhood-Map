@@ -14,7 +14,33 @@ var Location = function(coordinate) {
     (this.lng() < 0 ? "° W" : "° E");
   }, this);
   this.displayName = ko.observable(this.coordinate());
+  this.description = ko.observable("");
   this.visibility = ko.observable(true);
+
+  $.ajax({
+    url: "https://en.wikipedia.org/w/api.php",
+    dataType: "jsonp",
+    data: {
+      action: "query",
+      format: "json",
+      prop: "extracts",
+      exsentences: "3",
+      generator: "geosearch",
+      ggscoord: self.lat() + "|" + self.lng()
+    }
+  }).done(function(result) {
+    var pages = result.query.pages;
+    for (var pageid in pages) {
+      if (pages.hasOwnProperty(pageid)) {
+        var extract = pages[pageid].extract;
+        if (extract !== undefined) {
+          self.description(extract);
+        }
+      }
+    }
+  }).fail(function(error) {
+    console.log("fail to get description.");
+  });
 };
 
 var ViewModel = function() {
