@@ -64,7 +64,7 @@ var ViewModel = function() {
     coordinates.forEach(function(coordinate) {
       self.locations.push(new Location(coordinate));
     });
-  }).fail(function(err) {
+  }).fail(function(error) {
     console.log("fail to get locations.");
   });
 
