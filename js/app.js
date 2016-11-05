@@ -58,7 +58,6 @@ var ViewModel = function() {
 
   $.ajax({
     url: "locations.json",
-    method: 'GET',
   }).done(function(result) {
     var coordinates = result.coordinates;
 
