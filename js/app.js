@@ -14,6 +14,7 @@ var Location = function(coordinate) {
     (this.lng() < 0 ? "° W" : "° E");
   }, this);
   this.displayName = ko.observable(this.coordinate());
+  this.id = ko.observable("");
   this.description = ko.observable("");
   this.visibility = ko.observable(true);
 
@@ -91,12 +92,13 @@ var ViewModel = function() {
     });
   });
 
-  this.updateDisplayName = function(location) {
+  this.updatePlaceInfo = function(location) {
     var latlng = {lat: location.lat(), lng: location.lng()};
     geocoder.geocode({'location': latlng}, function(results, status) {
       if (status === 'OK') {
         if (results[1]) {
           location.displayName(results[1].address_components[0].short_name);
+          location.id(results[1].place_id);
         }
       }
     });
@@ -147,11 +149,11 @@ var ViewModel = function() {
   };
 
   this.addMarker = function(location) {
-    self.updateDisplayName(location);
+    self.updatePlaceInfo(location);
 
     var position = {lat: location.lat(), lng: location.lng()};
     var title = location.displayName();
-    var id = self.locationToMarkerMappings.length;
+    var id = location.id();
     var description = location.description();
 
     var infowindow = new google.maps.InfoWindow({
@@ -170,6 +172,9 @@ var ViewModel = function() {
 
     location.displayName.subscribe(function(newValue) {
       marker.title = newValue;
+    });
+    location.id.subscribe(function(newValue) {
+      marker.id = newValue;
     });
     location.description.subscribe(function(newValue) {
       infowindow.setContent(newValue);
