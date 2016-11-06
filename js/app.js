@@ -92,15 +92,13 @@ var ViewModel = function() {
   });
 
   this.updateDisplayName = function(location) {
-    self.locations().forEach(function(location) {
-      var latlng = {lat: location.lat(), lng: location.lng()};
-      geocoder.geocode({'location': latlng}, function(results, status) {
-        if (status === 'OK') {
-          if (results[1]) {
-            location.displayName(results[1].address_components[0].short_name);
-          }
+    var latlng = {lat: location.lat(), lng: location.lng()};
+    geocoder.geocode({'location': latlng}, function(results, status) {
+      if (status === 'OK') {
+        if (results[1]) {
+          location.displayName(results[1].address_components[0].short_name);
         }
-      });
+      }
     });
   };
 
