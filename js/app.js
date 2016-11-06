@@ -16,6 +16,7 @@ var Location = function(coordinate) {
   this.displayName = ko.observable(this.coordinate());
   this.id = ko.observable("");
   this.description = ko.observable("");
+  this.imageSource = ko.observable("");
   this.visibility = ko.observable(true);
 
   $.ajax({
@@ -99,6 +100,11 @@ var ViewModel = function() {
         if (results[1]) {
           location.displayName(results[1].address_components[0].short_name);
           location.id(results[1].place_id);
+          service.getDetails({placeId: location.id()}, function(place, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+              location.imageSource(place.photos[0].getUrl({maxWidth: 300}));
+            }
+          });
         }
       }
     });
@@ -177,8 +183,11 @@ var ViewModel = function() {
       marker.id = newValue;
     });
     location.description.subscribe(function(newValue) {
-      infowindow.setContent(newValue);
-    });
+      infowindow.setContent(self.getInfoWindowContent(this));
+    }.bind(location));
+    location.imageSource.subscribe(function(newValue) {
+      infowindow.setContent(self.getInfoWindowContent(this));
+    }.bind(location));
 
     self.locationToMarkerMappings.push({location: location, marker: marker});
 
@@ -193,6 +202,19 @@ var ViewModel = function() {
   this.showInfoWindow = function(location) {
     var marker = self.getMarker(location);
     new google.maps.event.trigger( marker, 'click' );
+  };
+
+  this.getInfoWindowContent = function(location) {
+    var contentString =
+    "<div class=\"row\">" +
+    "<div class=\"col-sm-3\">" +
+    "<img src=\"" + location.imageSource() + "\" alt=\"" + location.displayName() + "\" style=\"max-width: 100%\">" +
+    "</div>" +
+    "<div class=\"col-sm-9\">" +
+    location.description() +
+    "</div>"
+    "</div>";
+    return contentString;
   };
 
   // show specified marker on the map
@@ -216,6 +238,7 @@ function initMap() {
   });
 
   geocoder = new google.maps.Geocoder;
+  service = new google.maps.places.PlacesService(map);
 
   // add marker of all exist locations
   viewModel.updateMarkers();
