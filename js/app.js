@@ -33,6 +33,7 @@ var Location = function(coordinate) {
   }).done(function(result) {
     if (result.query === undefined) {
       console.log("fail to get description.");
+      return;
     }
 
     var pages = result.query.pages;
