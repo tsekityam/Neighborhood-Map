@@ -31,7 +31,6 @@
       <!-- The filter -->
       <input type="text" placeholder="Search" class="form-control" data-bind="value:filter, valueUpdate:'input'">
       <!-- The list of neighbourhood -->
-      <!-- TODO: implement the click handler -->
       <ul data-bind="foreach: locations">
         <li data-bind="style: { display: visibility() === true ? 'list-item' : 'none' }">
            <span data-bind="text: name" onclick="showInfoWindow(this.innerHTML)"></span>
