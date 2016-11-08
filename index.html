@@ -13,11 +13,11 @@
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="offcanvas">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
         <a class="navbar-brand" href="#">Neighborhood Map</a>
       </div>
     </div>
@@ -28,14 +28,14 @@
         <div id="map"></div>
       </div>
       <div class="col-xs-6 col-sm-3 sidebar sidebar-offcanvas">
-      <!-- The filter -->
-      <input type="text" placeholder="Search" class="form-control" data-bind="value:filter, valueUpdate:'input'">
-      <!-- The list of neighbourhood -->
-      <ul data-bind="foreach: locations">
-        <li data-bind="style: { display: visibility() === true ? 'list-item' : 'none' }">
-           <span data-bind="text: name" onclick="showInfoWindow(this.innerHTML)"></span>
-         </li>
-      </ul>
+        <!-- The filter -->
+        <input type="text" placeholder="Search" class="form-control" data-bind="value:filter, valueUpdate:'input'">
+        <!-- The list of neighbourhood -->
+        <ul data-bind="foreach: locations">
+          <li data-bind="style: { display: visibility() === true ? 'list-item' : 'none' }">
+            <span data-bind="text: name" onclick="showInfoWindow(this.innerHTML)"></span>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
