@@ -111,6 +111,8 @@ var ViewModel = function() {
             }
           });
         }
+      } else {
+        console.log(status);
       }
     });
   };
