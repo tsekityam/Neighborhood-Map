@@ -1,19 +1,18 @@
 var map;
-var geocoder;
 var viewModel;
 
-var Location = function(coordinate) {
+var Location = function(data) {
   var self = this;
 
-  this.lat = ko.observable(coordinate.lat);
-  this.lng = ko.observable(coordinate.lng);
+  this.lat = ko.observable(data.lat);
+  this.lng = ko.observable(data.lng);
   this.coordinate = ko.computed(function() {
     return this.lat() +
     (this.lat() < 0 ? "° S, " : "° N, ") +
     this.lng() +
     (this.lng() < 0 ? "° W" : "° E");
   }, this);
-  this.displayName = ko.observable(this.coordinate());
+  this.name = ko.observable(data.name);
   this.id = ko.observable("");
   this.description = ko.observable("");
   this.imageSource = ko.observable("");
@@ -27,8 +26,7 @@ var Location = function(coordinate) {
       format: "json",
       prop: "extracts",
       exsentences: "3",
-      generator: "geosearch",
-      ggscoord: self.lat() + "|" + self.lng()
+      titles: self.name()
     }
   }).done(function(result) {
     if (result.query === undefined) {
@@ -42,6 +40,7 @@ var Location = function(coordinate) {
         var extract = pages[pageid].extract;
         if (extract !== undefined) {
           self.description(extract);
+          return;
         }
       }
     }
@@ -66,10 +65,10 @@ var ViewModel = function() {
   $.ajax({
     url: "locations.json",
   }).done(function(result) {
-    var coordinates = result.coordinates;
+    var locations = result.locations;
 
-    coordinates.forEach(function(coordinate) {
-      self.locations.push(new Location(coordinate));
+    locations.forEach(function(data) {
+      self.locations.push(new Location(data));
     });
   }).fail(function(error) {
     console.log("fail to get locations.");
@@ -78,8 +77,8 @@ var ViewModel = function() {
   this.updateLocationVisibilities = function() {
     var filter = self.filter().toLocaleUpperCase();
     self.locations().forEach(function(location) {
-      var displayName = location.displayName().toLocaleUpperCase();
-      location.visibility(displayName.includes(filter));
+      var name = location.name().toLocaleUpperCase();
+      location.visibility(name.includes(filter));
 
       var marker = self.getMarker(location);
       if (marker !== undefined) {
@@ -92,27 +91,13 @@ var ViewModel = function() {
     });
   };
 
-  this.locations().forEach(function(location) {
-    location.displayName.subscribe(function(newValue) {
-      self.updateLocationVisibilities();
-    });
-  });
-
   this.updatePlaceInfo = function(location) {
-    var latlng = {lat: location.lat(), lng: location.lng()};
-    geocoder.geocode({'location': latlng}, function(results, status) {
-      if (status === 'OK') {
-        if (results[1]) {
-          location.displayName(results[1].address_components[0].short_name);
-          location.id(results[1].place_id);
-          service.getDetails({placeId: location.id()}, function(place, status) {
-            if (status == google.maps.places.PlacesServiceStatus.OK) {
-              location.imageSource(place.photos[0].getUrl({maxWidth: 300}));
-            }
-          });
-        }
+    service.textSearch({query: location.name()}, function(results, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        location.id(results[0].place_id);
+        location.imageSource(results[0].photos[0].getUrl({maxWidth: 300}));
       } else {
-        console.log(status);
+        console.log("failed to get info of " + location.name() + " from Google Maps");
       }
     });
   };
@@ -165,7 +150,7 @@ var ViewModel = function() {
     self.updatePlaceInfo(location);
 
     var position = {lat: location.lat(), lng: location.lng()};
-    var title = location.displayName();
+    var title = location.name();
     var id = location.id();
     var description = location.description();
 
@@ -183,9 +168,6 @@ var ViewModel = function() {
       infowindow.open(map, marker);
     });
 
-    location.displayName.subscribe(function(newValue) {
-      marker.title = newValue;
-    });
     location.id.subscribe(function(newValue) {
       marker.id = newValue;
     });
@@ -215,7 +197,7 @@ var ViewModel = function() {
     var contentString =
     "<div class=\"row\">" +
     "<div class=\"col-sm-3\">" +
-    "<img src=\"" + location.imageSource() + "\" alt=\"" + location.displayName() + "\" style=\"max-width: 100%\">" +
+    "<img src=\"" + location.imageSource() + "\" alt=\"" + location.name() + "\" style=\"max-width: 100%\">" +
     "</div>" +
     "<div class=\"col-sm-9\">" +
     location.description() +
@@ -244,7 +226,6 @@ function initMap() {
     zoom: 10  // Set Zoom level to city
   });
 
-  geocoder = new google.maps.Geocoder;
   service = new google.maps.places.PlacesService(map);
 
   // add marker of all exist locations
@@ -256,9 +237,9 @@ function initMap() {
   });
 }
 
-function showInfoWindow(displayName) {
+function showInfoWindow(name) {
   viewModel.locations().forEach(function (location) {
-    if (location.displayName() === displayName) {
+    if (location.name() === name) {
       viewModel.showInfoWindow(location);
     }
   });

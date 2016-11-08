@@ -1,52 +1,64 @@
 {
-  "coordinates": [
+  "locations": [
     {
       "lat": 22.3130,
-      "lng": 114.0413
+      "lng": 114.0413,
+      "name": "Hong Kong Disneyland Resort"
     },
     {
       "lat": 22.2467,
-      "lng": 114.1757
+      "lng": 114.1757,
+      "name": "Ocean Park Hong Kong"
     },
     {
       "lat": 22.2759,
-      "lng": 114.1455
+      "lng": 114.1455,
+      "name": "Victoria Peak"
     },
     {
       "lat": 22.2540,
-      "lng": 113.9050
+      "lng": 113.9050,
+      "name": "Tian Tan Buddha"
     },
     {
       "lat": 22.3523,
-      "lng": 114.1870
+      "lng": 114.1870,
+      "name": "Lion Rock"
     },
     {
       "lat": 22.3010,
-      "lng": 114.1776
+      "lng": 114.1776,
+      "name": "Hong Kong Science Museum"
     },
     {
       "lat": 22.3019,
-      "lng": 114.1775
+      "lng": 114.1775,
+      "name": "Hong Kong Museum of History"
     },
     {
       "lat": 22.2943,
-      "lng": 114.1719
+      "lng": 114.1719,
+      "name": "Hong Kong Space Museum"
     },
     {
       "lat": 22.2938,
-      "lng": 114.1722
+      "lng": 114.1722,
+      "name": "Hong Kong Museum of Art"
     },
     {
       "lat": 22.2204,
-      "lng": 114.2127
+      "lng": 114.2127,
+      "name": "Stanley, Hong Kong"
     },
     {
       "lat": 22.2000,
-      "lng": 114.1350
+      "lng": 114.1350,
+      "name": "Lamma Island"
     },
     {
       "lat": 22.2936,
-      "lng": 114.1695
+      "lng": 114.1695,
+      "name": "Clock Tower, Hong Kong"
     }
   ]
 }

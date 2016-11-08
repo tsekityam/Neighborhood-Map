@@ -34,7 +34,7 @@
       <!-- TODO: implement the click handler -->
       <ul data-bind="foreach: locations">
         <li data-bind="style: { display: visibility() === true ? 'list-item' : 'none' }">
-           <span data-bind="text: displayName" onclick="showInfoWindow(this.innerHTML)"></span>
+           <span data-bind="text: name" onclick="showInfoWindow(this.innerHTML)"></span>
          </li>
       </ul>
       </div>
