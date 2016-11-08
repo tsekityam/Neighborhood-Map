@@ -31,6 +31,10 @@ var Location = function(coordinate) {
       ggscoord: self.lat() + "|" + self.lng()
     }
   }).done(function(result) {
+    if (result.query === undefined) {
+      console.log("fail to get description.");
+    }
+
     var pages = result.query.pages;
     for (var pageid in pages) {
       if (pages.hasOwnProperty(pageid)) {
