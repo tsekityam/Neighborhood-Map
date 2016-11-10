@@ -4,11 +4,12 @@ var viewModel;
 var Place = function(place) {
   var self = this;
 
-  this.location = ko.observable({lat: 0, lng: 0});
-  this.name = ko.observable(place);
   this.id = ko.observable("");
+  this.name = ko.observable(place);
+  this.location = ko.observable({lat: 0, lng: 0});
   this.description = ko.observable("");
   this.imageSource = ko.observable("");
+
   this.visibility = ko.observable(true);
 
   $.ajax({
@@ -61,7 +62,11 @@ var ViewModel = function() {
     var places = result.places;
 
     places.forEach(function(place) {
-      self.places.push(new Place(place));
+      var place = new Place(place);
+      self.places.push(place);
+      place.id.subscribe(function() {
+        self.addMarker(place);
+      }.bind(place));
     });
   }).fail(function(error) {
     console.log("fail to get places.");
@@ -85,11 +90,18 @@ var ViewModel = function() {
   };
 
   this.updatePlaceInfo = function(place) {
+    if (place.id() !== "") {
+      // the place info are ready, no need to get it again
+      return;
+    }
+
     service.textSearch({query: place.name()}, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
-        place.id(results[0].place_id);
         place.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
         place.imageSource(results[0].photos[0].getUrl({maxWidth: 300}));
+
+        // the id is a flag to indicate that the data are all fetched, so it has to be set at the end of callback.
+        place.id(results[0].place_id);
       } else {
         console.log("failed to get info of " + place.name() + " from Google Maps");
       }
@@ -107,7 +119,7 @@ var ViewModel = function() {
     return undefined;
   };
 
-  this.updateMarkers = function() {
+  this.updatePlaceInfoAll = function() {
     // do nothing if Googl Maps API is not ready
     if (map === undefined) {
       return;
@@ -120,66 +132,39 @@ var ViewModel = function() {
     self.places().forEach(function(place){
       var marker = self.getMarker(place);
       if (marker === undefined) {
-        self.addMarker(place);
-      }
-    });
-
-    self.placeToMarkerMappings.forEach(function(mapping) {
-      var placeExists = false;
-      for (var i = 0; i < self.places().length; i++) {
-        var place = self.places()[i];
-        if (place === mapping.place) {
-          placeExists = true;
-          break;
-        }
-      }
-
-      if (!placeExists) {
-        self.hideMarker(mapping.marker);
+        self.updatePlaceInfo(place);
       }
     });
   };
 
-  // Although this function is called addMarker, however, we will not add marker to the map
-  // until Google Maps returns the position of the place.
   this.addMarker = function(place) {
-    self.updatePlaceInfo(place);
-
-    var position = new google.maps.LatLng(place.location().lat, place.location().lng);  // position should be 0, 0 here.
-    var title = place.name();
     var id = place.id();
+    var title = place.name();
+    var position = new google.maps.LatLng(place.location().lat, place.location().lng);  // position should be 0, 0 here.
     var description = place.description();
+
+    var marker = new google.maps.Marker({
+      id: id,
+      title: title,
+      position: position,
+      animation: google.maps.Animation.DROP
+    });
 
     var infowindow = new google.maps.InfoWindow({
       content: description
-    });
-
-    var marker = new google.maps.Marker({
-      position: position,
-      title: title,
-      animation: google.maps.Animation.DROP,
-      id: id
     });
     marker.addListener('click', function() {
       infowindow.open(map, marker);
     });
 
-    place.id.subscribe(function(newValue) {
-      marker.id = newValue;
-    });
-    place.location.subscribe(function(newValue) {
-      marker.setPosition(new google.maps.LatLng(place.location().lat, place.location().lng));
-      // Display the new marker
-      marker.setMap(map);
+    // Display the new marker
+    marker.setMap(map);
 
-      // Extend the boundaries of the map for the new marker
-      self.bounds.extend(marker.position);
-      map.fitBounds(self.bounds);
-    }.bind(place));
+    // Extend the boundaries of the map for the new marker
+    self.bounds.extend(marker.position);
+    map.fitBounds(self.bounds);
+
     place.description.subscribe(function(newValue) {
-      infowindow.setContent(self.getInfoWindowContent(this));
-    }.bind(place));
-    place.imageSource.subscribe(function(newValue) {
       infowindow.setContent(self.getInfoWindowContent(this));
     }.bind(place));
 
@@ -226,12 +211,10 @@ function initMap() {
 
   service = new google.maps.places.PlacesService(map);
 
-  // add marker of all exist places
-  viewModel.updateMarkers();
+  viewModel.updatePlaceInfoAll();
 
-  // update markers if there is anything added or removed from place list
   viewModel.places.subscribe(function(places) {
-    viewModel.updateMarkers();
+    viewModel.updatePlaceInfoAll();
   });
 }
 
