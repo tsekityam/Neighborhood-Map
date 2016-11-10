@@ -1,18 +1,11 @@
 var map;
 var viewModel;
 
-var Location = function(data) {
+var Location = function(location) {
   var self = this;
 
-  this.lat = ko.observable(data.lat);
-  this.lng = ko.observable(data.lng);
-  this.coordinate = ko.computed(function() {
-    return this.lat() +
-    (this.lat() < 0 ? "° S, " : "° N, ") +
-    this.lng() +
-    (this.lng() < 0 ? "° W" : "° E");
-  }, this);
-  this.name = ko.observable(data.name);
+  this.location = ko.observable({lat: 0, lng: 0});
+  this.name = ko.observable(location);
   this.id = ko.observable("");
   this.description = ko.observable("");
   this.imageSource = ko.observable("");
@@ -67,8 +60,8 @@ var ViewModel = function() {
   }).done(function(result) {
     var locations = result.locations;
 
-    locations.forEach(function(data) {
-      self.locations.push(new Location(data));
+    locations.forEach(function(location) {
+      self.locations.push(new Location(location));
     });
   }).fail(function(error) {
     console.log("fail to get locations.");
@@ -95,6 +88,7 @@ var ViewModel = function() {
     service.textSearch({query: location.name()}, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         location.id(results[0].place_id);
+        location.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
         location.imageSource(results[0].photos[0].getUrl({maxWidth: 300}));
       } else {
         console.log("failed to get info of " + location.name() + " from Google Maps");
@@ -146,10 +140,12 @@ var ViewModel = function() {
     });
   };
 
+  // Although this function is called addMarker, however, we will not add marker to the map
+  // until Google Maps returns the position of the location.
   this.addMarker = function(location) {
     self.updatePlaceInfo(location);
 
-    var position = {lat: location.lat(), lng: location.lng()};
+    var position = new google.maps.LatLng(location.location().lat, location.location().lng);  // position should be 0, 0 here.
     var title = location.name();
     var id = location.id();
     var description = location.description();
@@ -171,6 +167,15 @@ var ViewModel = function() {
     location.id.subscribe(function(newValue) {
       marker.id = newValue;
     });
+    location.location.subscribe(function(newValue) {
+      marker.setPosition(new google.maps.LatLng(location.location().lat, location.location().lng));
+      // Display the new marker
+      marker.setMap(map);
+
+      // Extend the boundaries of the map for the new marker
+      self.bounds.extend(marker.position);
+      map.fitBounds(self.bounds);
+    }.bind(location));
     location.description.subscribe(function(newValue) {
       infowindow.setContent(self.getInfoWindowContent(this));
     }.bind(location));
@@ -179,18 +184,11 @@ var ViewModel = function() {
     }.bind(location));
 
     self.locationToMarkerMappings.push({location: location, marker: marker});
-
-    // Display the new marker
-    marker.setMap(map);
-
-    // Extend the boundaries of the map for the new marker
-    self.bounds.extend(marker.position);
-    map.fitBounds(self.bounds);
   };
 
   this.showInfoWindow = function(location) {
     var marker = self.getMarker(location);
-    new google.maps.event.trigger( marker, 'click' );
+    new google.maps.event.trigger(marker, 'click');
   };
 
   this.getInfoWindowContent = function(location) {
