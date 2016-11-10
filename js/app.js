@@ -1,4 +1,5 @@
 var map;
+var service;
 var bounds;
 
 var viewModel;
