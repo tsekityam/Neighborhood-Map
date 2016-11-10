@@ -89,7 +89,7 @@ var ViewModel = function() {
     });
   };
 
-  this.updatePlaceInfo = function(place) {
+  this.updateSinglePlaceInfo = function(place) {
     if (place.id() !== "") {
       // the place info are ready, no need to get it again
       return;
@@ -119,7 +119,7 @@ var ViewModel = function() {
     return undefined;
   };
 
-  this.updatePlaceInfoAll = function() {
+  this.updateAllPlaceInfo = function() {
     // do nothing if Googl Maps API is not ready
     if (map === undefined) {
       return;
@@ -132,7 +132,7 @@ var ViewModel = function() {
     self.places().forEach(function(place){
       var marker = self.getMarker(place);
       if (marker === undefined) {
-        self.updatePlaceInfo(place);
+        self.updateSinglePlaceInfo(place);
       }
     });
   };
@@ -211,10 +211,10 @@ function initMap() {
 
   service = new google.maps.places.PlacesService(map);
 
-  viewModel.updatePlaceInfoAll();
+  viewModel.updateAllPlaceInfo();
 
   viewModel.places.subscribe(function(places) {
-    viewModel.updatePlaceInfoAll();
+    viewModel.updateAllPlaceInfo();
   });
 }
 
