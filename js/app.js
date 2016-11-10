@@ -49,7 +49,7 @@ var Place = function(place) {
 var ViewModel = function() {
   var self = this;
 
-  this.places = [];
+  this.places = ko.observableArray([]);
   this.filter = ko.observable("");
 
   this.placeToMarkerMappings = [];  // place to marker mappings
@@ -70,15 +70,13 @@ var ViewModel = function() {
         self.addMarker(place);
       }.bind(place));
     });
-
-    viewModel.updateAllPlaceInfo();
   }).fail(function(error) {
     console.log("fail to get places.");
   });
 
   this.updatePlaceVisibilities = function() {
     var filter = self.filter().toLocaleUpperCase();
-    self.places.forEach(function(place) {
+    self.places().forEach(function(place) {
       var name = place.name().toLocaleUpperCase();
       place.visibility(name.includes(filter));
 
@@ -133,7 +131,7 @@ var ViewModel = function() {
       return;
     }
 
-    self.places.forEach(function(place){
+    self.places().forEach(function(place){
       var marker = self.getMarker(place);
       if (marker === undefined) {
         self.updateSinglePlaceInfo(place);
@@ -220,7 +218,7 @@ function initMap() {
 }
 
 function showInfoWindow(name) {
-  viewModel.places.forEach(function (place) {
+  viewModel.places().forEach(function (place) {
     if (place.name() === name) {
       viewModel.showInfoWindow(place);
     }
