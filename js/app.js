@@ -1,4 +1,6 @@
 var map;
+var bounds;
+
 var viewModel;
 
 var Place = function(place) {
@@ -50,7 +52,6 @@ var ViewModel = function() {
   this.filter = ko.observable("");
 
   this.placeToMarkerMappings = [];  // place to marker mappings
-  this.bounds;
 
   this.filter.subscribe(function(newValue) {
     self.updatePlaceVisibilities()
@@ -131,10 +132,6 @@ var ViewModel = function() {
       return;
     }
 
-    if (self.bounds === undefined) {
-      self.bounds = new google.maps.LatLngBounds();
-    }
-
     self.places.forEach(function(place){
       var marker = self.getMarker(place);
       if (marker === undefined) {
@@ -167,8 +164,8 @@ var ViewModel = function() {
     marker.setMap(map);
 
     // Extend the boundaries of the map for the new marker
-    self.bounds.extend(marker.position);
-    map.fitBounds(self.bounds);
+    bounds.extend(marker.position);
+    map.fitBounds(bounds);
 
     place.description.subscribe(function(newValue) {
       infowindow.setContent(self.getInfoWindowContent(this));
@@ -216,6 +213,7 @@ function initMap() {
   });
 
   service = new google.maps.places.PlacesService(map);
+  bounds = new google.maps.LatLngBounds();
 
   viewModel.updateAllPlaceInfo();
 }
