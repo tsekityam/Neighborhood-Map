@@ -1,11 +1,11 @@
 var map;
 var viewModel;
 
-var Location = function(location) {
+var Place = function(place) {
   var self = this;
 
   this.location = ko.observable({lat: 0, lng: 0});
-  this.name = ko.observable(location);
+  this.name = ko.observable(place);
   this.id = ko.observable("");
   this.description = ko.observable("");
   this.imageSource = ko.observable("");
@@ -45,37 +45,37 @@ var Location = function(location) {
 var ViewModel = function() {
   var self = this;
 
-  this.locations = ko.observableArray([]);
+  this.places = ko.observableArray([]);
   this.filter = ko.observable("");
 
-  this.locationToMarkerMappings = [];  // location to marker mappings
+  this.placeToMarkerMappings = [];  // place to marker mappings
   this.bounds;
 
   this.filter.subscribe(function(newValue) {
-    self.updateLocationVisibilities()
+    self.updatePlaceVisibilities()
   });
 
   $.ajax({
-    url: "locations.json",
+    url: "places.json",
   }).done(function(result) {
-    var locations = result.locations;
+    var places = result.places;
 
-    locations.forEach(function(location) {
-      self.locations.push(new Location(location));
+    places.forEach(function(place) {
+      self.places.push(new Place(place));
     });
   }).fail(function(error) {
-    console.log("fail to get locations.");
+    console.log("fail to get places.");
   });
 
-  this.updateLocationVisibilities = function() {
+  this.updatePlaceVisibilities = function() {
     var filter = self.filter().toLocaleUpperCase();
-    self.locations().forEach(function(location) {
-      var name = location.name().toLocaleUpperCase();
-      location.visibility(name.includes(filter));
+    self.places().forEach(function(place) {
+      var name = place.name().toLocaleUpperCase();
+      place.visibility(name.includes(filter));
 
-      var marker = self.getMarker(location);
+      var marker = self.getMarker(place);
       if (marker !== undefined) {
-        if (location.visibility() === true) {
+        if (place.visibility() === true) {
           self.showMarker(marker);
         } else {
           self.hideMarker(marker);
@@ -84,22 +84,22 @@ var ViewModel = function() {
     });
   };
 
-  this.updatePlaceInfo = function(location) {
-    service.textSearch({query: location.name()}, function(results, status) {
+  this.updatePlaceInfo = function(place) {
+    service.textSearch({query: place.name()}, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
-        location.id(results[0].place_id);
-        location.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
-        location.imageSource(results[0].photos[0].getUrl({maxWidth: 300}));
+        place.id(results[0].place_id);
+        place.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
+        place.imageSource(results[0].photos[0].getUrl({maxWidth: 300}));
       } else {
-        console.log("failed to get info of " + location.name() + " from Google Maps");
+        console.log("failed to get info of " + place.name() + " from Google Maps");
       }
     });
   };
 
-  this.getMarker = function(location) {
-    for (var i = 0; i < self.locationToMarkerMappings.length; i++) {
-      var mapping = self.locationToMarkerMappings[i];
-      if (mapping.location === location) {
+  this.getMarker = function(place) {
+    for (var i = 0; i < self.placeToMarkerMappings.length; i++) {
+      var mapping = self.placeToMarkerMappings[i];
+      if (mapping.place === place) {
         return mapping.marker;
       }
     }
@@ -117,38 +117,38 @@ var ViewModel = function() {
       self.bounds = new google.maps.LatLngBounds();
     }
 
-    self.locations().forEach(function(location){
-      var marker = self.getMarker(location);
+    self.places().forEach(function(place){
+      var marker = self.getMarker(place);
       if (marker === undefined) {
-        self.addMarker(location);
+        self.addMarker(place);
       }
     });
 
-    self.locationToMarkerMappings.forEach(function(mapping) {
-      var locationExists = false;
-      for (var i = 0; i < self.locations().length; i++) {
-        var location = self.locations()[i];
-        if (location === mapping.location) {
-          locationExists = true;
+    self.placeToMarkerMappings.forEach(function(mapping) {
+      var placeExists = false;
+      for (var i = 0; i < self.places().length; i++) {
+        var place = self.places()[i];
+        if (place === mapping.place) {
+          placeExists = true;
           break;
         }
       }
 
-      if (!locationExists) {
+      if (!placeExists) {
         self.hideMarker(mapping.marker);
       }
     });
   };
 
   // Although this function is called addMarker, however, we will not add marker to the map
-  // until Google Maps returns the position of the location.
-  this.addMarker = function(location) {
-    self.updatePlaceInfo(location);
+  // until Google Maps returns the position of the place.
+  this.addMarker = function(place) {
+    self.updatePlaceInfo(place);
 
-    var position = new google.maps.LatLng(location.location().lat, location.location().lng);  // position should be 0, 0 here.
-    var title = location.name();
-    var id = location.id();
-    var description = location.description();
+    var position = new google.maps.LatLng(place.location().lat, place.location().lng);  // position should be 0, 0 here.
+    var title = place.name();
+    var id = place.id();
+    var description = place.description();
 
     var infowindow = new google.maps.InfoWindow({
       content: description
@@ -164,41 +164,41 @@ var ViewModel = function() {
       infowindow.open(map, marker);
     });
 
-    location.id.subscribe(function(newValue) {
+    place.id.subscribe(function(newValue) {
       marker.id = newValue;
     });
-    location.location.subscribe(function(newValue) {
-      marker.setPosition(new google.maps.LatLng(location.location().lat, location.location().lng));
+    place.location.subscribe(function(newValue) {
+      marker.setPosition(new google.maps.LatLng(place.location().lat, place.location().lng));
       // Display the new marker
       marker.setMap(map);
 
       // Extend the boundaries of the map for the new marker
       self.bounds.extend(marker.position);
       map.fitBounds(self.bounds);
-    }.bind(location));
-    location.description.subscribe(function(newValue) {
+    }.bind(place));
+    place.description.subscribe(function(newValue) {
       infowindow.setContent(self.getInfoWindowContent(this));
-    }.bind(location));
-    location.imageSource.subscribe(function(newValue) {
+    }.bind(place));
+    place.imageSource.subscribe(function(newValue) {
       infowindow.setContent(self.getInfoWindowContent(this));
-    }.bind(location));
+    }.bind(place));
 
-    self.locationToMarkerMappings.push({location: location, marker: marker});
+    self.placeToMarkerMappings.push({place: place, marker: marker});
   };
 
-  this.showInfoWindow = function(location) {
-    var marker = self.getMarker(location);
+  this.showInfoWindow = function(place) {
+    var marker = self.getMarker(place);
     new google.maps.event.trigger(marker, 'click');
   };
 
-  this.getInfoWindowContent = function(location) {
+  this.getInfoWindowContent = function(place) {
     var contentString =
     "<div class=\"row\">" +
     "<div class=\"col-sm-3\">" +
-    "<img src=\"" + location.imageSource() + "\" alt=\"" + location.name() + "\" style=\"max-width: 100%\">" +
+    "<img src=\"" + place.imageSource() + "\" alt=\"" + place.name() + "\" style=\"max-width: 100%\">" +
     "</div>" +
     "<div class=\"col-sm-9\">" +
-    location.description() +
+    place.description() +
     "</div>"
     "</div>";
     return contentString;
@@ -226,19 +226,19 @@ function initMap() {
 
   service = new google.maps.places.PlacesService(map);
 
-  // add marker of all exist locations
+  // add marker of all exist places
   viewModel.updateMarkers();
 
-  // update markers if there is anything added or removed from location list
-  viewModel.locations.subscribe(function(locations) {
+  // update markers if there is anything added or removed from place list
+  viewModel.places.subscribe(function(places) {
     viewModel.updateMarkers();
   });
 }
 
 function showInfoWindow(name) {
-  viewModel.locations().forEach(function (location) {
-    if (location.name() === name) {
-      viewModel.showInfoWindow(location);
+  viewModel.places().forEach(function (place) {
+    if (place.name() === name) {
+      viewModel.showInfoWindow(place);
     }
   });
 }
