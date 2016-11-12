@@ -139,6 +139,11 @@ var ViewModel = function() {
   };
 
   this.setMarkerBounce = function(marker, bounce) {
+    if (marker === undefined) {
+      // do nothing on an undefined marker
+      return;
+    }
+
     if (bounce === true) {
       marker.setAnimation(google.maps.Animation.BOUNCE);
     } else {
