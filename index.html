@@ -33,7 +33,7 @@
         <!-- The list of neighbourhood -->
         <ul data-bind="foreach: places">
           <li data-bind="style: { display: visibility() === true ? 'list-item' : 'none' }">
-            <span data-bind="text: name, click: showInfoWindow"></span>
+            <span data-bind="text: name, click: showInfoWindow, event: { mouseover: enableMarkerBounce, mouseout: disableMarkerBounce }"></span>
           </li>
         </ul>
       </div>

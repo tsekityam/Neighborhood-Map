@@ -138,6 +138,14 @@ var ViewModel = function() {
     });
   };
 
+  this.setMarkerBounce = function(marker, bounce) {
+    if (bounce === true) {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+    } else {
+      marker.setAnimation(null);
+    }
+  };
+
   this.addMarker = function(place) {
     var id = place.id();
     var title = place.name();
@@ -156,6 +164,12 @@ var ViewModel = function() {
     });
     marker.addListener('click', function() {
       infowindow.open(map, marker);
+    });
+    marker.addListener('mouseover', function() {
+      self.setMarkerBounce(marker, true);
+    });
+    marker.addListener('mouseout', function() {
+      self.setMarkerBounce(marker, false);
     });
 
     // Display the new marker
@@ -217,4 +231,14 @@ function showInfoWindow(name) {
       viewModel.showInfoWindow(place);
     }
   });
+}
+
+function enableMarkerBounce(place) {
+  var marker = viewModel.getMarker(place);
+  viewModel.setMarkerBounce(marker, true);
+};
+
+function disableMarkerBounce(place) {
+  var marker = viewModel.getMarker(place);
+  viewModel.setMarkerBounce(marker, false);
 }
