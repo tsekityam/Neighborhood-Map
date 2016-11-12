@@ -1,6 +1,5 @@
 var map;
 var service;
-var bounds;
 
 var viewModel;
 
@@ -162,10 +161,6 @@ var ViewModel = function() {
     // Display the new marker
     marker.setMap(map);
 
-    // Extend the boundaries of the map for the new marker
-    bounds.extend(marker.position);
-    map.fitBounds(bounds);
-
     place.description.subscribe(function(newValue) {
       infowindow.setContent(self.getInfoWindowContent(this));
     }.bind(place));
@@ -212,7 +207,6 @@ function initMap() {
   });
 
   service = new google.maps.places.PlacesService(map);
-  bounds = new google.maps.LatLngBounds();
 
   viewModel.updateAllPlaceInfo();
 }
