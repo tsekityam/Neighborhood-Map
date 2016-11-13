@@ -32,8 +32,8 @@
         <input type="text" placeholder="Search" class="form-control" data-bind="value:filter, valueUpdate:'input'">
         <!-- The list of neighbourhood -->
         <ul data-bind="foreach: places">
-          <li class="place" data-bind="style: { display: visibility() === true ? 'list-item' : 'none' }">
-            <span data-bind="text: name, click: showInfoWindow, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }"></span>
+          <li class="place" data-bind="style: { display: visibility() === true ? 'list-item' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }">
+            <span data-bind="text: name, click: showInfoWindow"></span>
           </li>
         </ul>
       </div>
