@@ -242,7 +242,9 @@ var ViewModel = function() {
 
   this.showInfoWindow = function(place) {
     var marker = self.getMarker(place);
-    new google.maps.event.trigger(marker, 'click');
+    if (marker !== undefined) {
+      new google.maps.event.trigger(marker, 'click');      
+    }
   };
 
   // show specified marker on the map
@@ -276,10 +278,14 @@ function showInfoWindow(place) {
 
 function highlightMarker(place) {
   var marker = viewModel.getMarker(place);
-  viewModel.setMarkerHighlighted(marker, true);
+  if (marker !== undefined) {
+    viewModel.setMarkerHighlighted(marker, true);
+  }
 };
 
 function undoHighlightMarker(place) {
   var marker = viewModel.getMarker(place);
-  viewModel.setMarkerHighlighted(marker, false);
+  if (marker !== undefined) {
+    viewModel.setMarkerHighlighted(marker, false);
+  }
 }
