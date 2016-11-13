@@ -170,6 +170,10 @@ var ViewModel = function() {
     });
     marker.addListener('click', function() {
       infowindow.open(map, marker);
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function() {
+        marker.setAnimation(null);
+      }, 700);
     });
     marker.addListener('mouseover', function() {
       self.setMarkerHighlighted(marker, true);
