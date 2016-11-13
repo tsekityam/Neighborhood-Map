@@ -138,16 +138,16 @@ var ViewModel = function() {
     });
   };
 
-  this.setMarkerBounce = function(marker, bounce) {
+  this.setMarkerHighlighted = function(marker, value) {
     if (marker === undefined) {
       // do nothing on an undefined marker
       return;
     }
 
-    if (bounce === true) {
-      marker.setAnimation(google.maps.Animation.BOUNCE);
+    if (value === true) {
+      marker.setIcon("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
     } else {
-      marker.setAnimation(null);
+      marker.setIcon("http://maps.google.com/mapfiles/ms/icons/red-dot.png");
     }
   };
 
@@ -161,7 +161,8 @@ var ViewModel = function() {
       id: id,
       title: title,
       position: position,
-      animation: google.maps.Animation.DROP
+      animation: google.maps.Animation.DROP,
+      icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
     });
 
     var infowindow = new google.maps.InfoWindow({
@@ -171,10 +172,10 @@ var ViewModel = function() {
       infowindow.open(map, marker);
     });
     marker.addListener('mouseover', function() {
-      self.setMarkerBounce(marker, true);
+      self.setMarkerHighlighted(marker, true);
     });
     marker.addListener('mouseout', function() {
-      self.setMarkerBounce(marker, false);
+      self.setMarkerHighlighted(marker, false);
     });
 
     // Display the new marker
@@ -234,12 +235,12 @@ function showInfoWindow(place) {
   viewModel.showInfoWindow(place);
 }
 
-function enableMarkerBounce(place) {
+function highlightMarker(place) {
   var marker = viewModel.getMarker(place);
-  viewModel.setMarkerBounce(marker, true);
+  viewModel.setMarkerHighlighted(marker, true);
 };
 
-function disableMarkerBounce(place) {
+function undoHighlightMarker(place) {
   var marker = viewModel.getMarker(place);
-  viewModel.setMarkerBounce(marker, false);
+  viewModel.setMarkerHighlighted(marker, false);
 }
