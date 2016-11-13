@@ -228,7 +228,7 @@ var ViewModel = function() {
     });
 
     marker.addListener('mouseover', function() {
-      self.setMarkerHighlighted(marker, false);
+      self.setMarkerHighlighted(marker, true);
     });
     marker.addListener('mouseout', function() {
       self.setMarkerHighlighted(marker, false);
