@@ -10,7 +10,7 @@ var Place = function(place) {
   this.name = ko.observable(place);
   this.location = ko.observable({lat: 0, lng: 0});
   this.description = ko.observable("");
-  this.imageSource = ko.observable("");
+  this.photo = ko.observable("");
 
   this.visibility = ko.observable(true);
 
@@ -99,7 +99,7 @@ var ViewModel = function() {
     service.textSearch({query: place.name()}, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         place.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
-        place.imageSource(results[0].photos[0].getUrl({maxWidth: 300}));
+        place.photo(results[0].photos[0].getUrl({maxWidth: 300}));
 
         // the id is a flag to indicate that the data are all fetched, so it has to be set at the end of callback.
         place.id(results[0].place_id);
@@ -201,7 +201,7 @@ var ViewModel = function() {
     var contentString =
     "<div class=\"row\">" +
     "<div class=\"col-sm-3\">" +
-    "<img src=\"" + place.imageSource() + "\" alt=\"" + place.name() + "\" style=\"max-width: 100%\">" +
+    "<img src=\"" + place.photo() + "\" alt=\"" + place.name() + "\" style=\"max-width: 100%\">" +
     "</div>" +
     "<div class=\"col-sm-9\">" +
     place.description() +
