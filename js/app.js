@@ -63,6 +63,7 @@ var ViewModel = function() {
 
   this.places = ko.observableArray([]);
   this.filter = ko.observable("");
+  this.lastOpenedInfoWindow;  // keep track of last opened info window, to ensure that not more than 1 window is opened
 
   this.placeToMarkerMappings = [];  // place to marker mappings
 
@@ -189,11 +190,19 @@ var ViewModel = function() {
     });
 
     marker.addListener('click', function() {
+      // Close last opened info window if there is any.
+      if (self.lastOpenedInfoWindow !== undefined) {
+        self.lastOpenedInfoWindow.close();
+      }
+
       infowindow.open(map, marker);
+
       marker.setAnimation(google.maps.Animation.BOUNCE);
       setTimeout(function() {
         marker.setAnimation(null);
       }, 700);
+
+      self.lastOpenedInfoWindow = infowindow;
     });
 
     marker.addListener('mouseover', function() {
