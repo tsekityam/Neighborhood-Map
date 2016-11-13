@@ -230,12 +230,8 @@ function initMap() {
   viewModel.updateAllPlaceInfo();
 }
 
-function showInfoWindow(name) {
-  viewModel.places().forEach(function (place) {
-    if (place.name() === name) {
-      viewModel.showInfoWindow(place);
-    }
-  });
+function showInfoWindow(place) {
+  viewModel.showInfoWindow(place);
 }
 
 function enableMarkerBounce(place) {
