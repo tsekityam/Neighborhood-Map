@@ -14,6 +14,19 @@ var Place = function(place) {
 
   this.visibility = ko.observable(true);
 
+  this.infoWindowContent = ko.computed(function() {
+    var content =
+    "<div class=\"row\">" +
+    "<div class=\"col-sm-3\">" +
+    "<img src=\"" + this.photo() + "\" alt=\"" + this.name() + "\" style=\"max-width: 100%\">" +
+    "</div>" +
+    "<div class=\"col-sm-9\">" +
+    this.wikiExtracts() +
+    "</div>"
+    "</div>";
+    return content;
+  }, this);
+
   $.ajax({
     url: "https://en.wikipedia.org/w/api.php",
     dataType: "jsonp",
@@ -155,7 +168,14 @@ var ViewModel = function() {
     var id = place.id();
     var title = place.name();
     var position = new google.maps.LatLng(place.location().lat, place.location().lng);  // position should be 0, 0 here.
-    var wikiExtracts = place.wikiExtracts();
+    var infoWindowContent = place.infoWindowContent();
+
+    var infowindow = new google.maps.InfoWindow({
+      content: infoWindowContent
+    });
+    place.infoWindowContent.subscribe(function(newValue) {
+      infowindow.setContent(newValue);
+    });
 
     var marker = new google.maps.Marker({
       id: id,
@@ -164,10 +184,7 @@ var ViewModel = function() {
       animation: google.maps.Animation.DROP,
       icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
     });
-
-    var infowindow = new google.maps.InfoWindow({
-      content: wikiExtracts
-    });
+    
     marker.addListener('click', function() {
       infowindow.open(map, marker);
       marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -175,9 +192,11 @@ var ViewModel = function() {
         marker.setAnimation(null);
       }, 700);
     });
+
     marker.addListener('mouseover', function() {
       self.setMarkerHighlighted(marker, true);
     });
+
     marker.addListener('mouseout', function() {
       self.setMarkerHighlighted(marker, false);
     });
@@ -185,29 +204,12 @@ var ViewModel = function() {
     // Display the new marker
     marker.setMap(map);
 
-    place.wikiExtracts.subscribe(function(newValue) {
-      infowindow.setContent(self.getInfoWindowContent(this));
-    }.bind(place));
-
     self.placeToMarkerMappings.push({place: place, marker: marker});
   };
 
   this.showInfoWindow = function(place) {
     var marker = self.getMarker(place);
     new google.maps.event.trigger(marker, 'click');
-  };
-
-  this.getInfoWindowContent = function(place) {
-    var contentString =
-    "<div class=\"row\">" +
-    "<div class=\"col-sm-3\">" +
-    "<img src=\"" + place.photo() + "\" alt=\"" + place.name() + "\" style=\"max-width: 100%\">" +
-    "</div>" +
-    "<div class=\"col-sm-9\">" +
-    place.wikiExtracts() +
-    "</div>"
-    "</div>";
-    return contentString;
   };
 
   // show specified marker on the map
