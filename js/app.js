@@ -175,7 +175,7 @@ var ViewModel = function() {
 
     var infowindow = new google.maps.InfoWindow({
       content: infoWindowContent,
-      maxWidth: 500
+      maxWidth: 600
     });
     place.infoWindowContent.subscribe(function(newValue) {
       infowindow.setContent(newValue);
