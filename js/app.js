@@ -9,7 +9,7 @@ var Place = function(place) {
   this.id = ko.observable("");
   this.name = ko.observable(place);
   this.location = ko.observable({lat: 0, lng: 0});
-  this.description = ko.observable("");
+  this.wikiExtracts = ko.observable("");
   this.photo = ko.observable("");
 
   this.visibility = ko.observable(true);
@@ -26,7 +26,7 @@ var Place = function(place) {
     }
   }).done(function(result) {
     if (result.query === undefined) {
-      console.log("fail to get description.");
+      console.log("fail to get extracts from wikipedia.");
       return;
     }
 
@@ -35,13 +35,13 @@ var Place = function(place) {
       if (pages.hasOwnProperty(pageid)) {
         var extract = pages[pageid].extract;
         if (extract !== undefined) {
-          self.description(extract);
+          self.wikiExtracts(extract);
           return;
         }
       }
     }
   }).fail(function(error) {
-    console.log("fail to get description.");
+    console.log("fail to get extracts from wikipedia.");
   });
 };
 
@@ -155,7 +155,7 @@ var ViewModel = function() {
     var id = place.id();
     var title = place.name();
     var position = new google.maps.LatLng(place.location().lat, place.location().lng);  // position should be 0, 0 here.
-    var description = place.description();
+    var wikiExtracts = place.wikiExtracts();
 
     var marker = new google.maps.Marker({
       id: id,
@@ -166,7 +166,7 @@ var ViewModel = function() {
     });
 
     var infowindow = new google.maps.InfoWindow({
-      content: description
+      content: wikiExtracts
     });
     marker.addListener('click', function() {
       infowindow.open(map, marker);
@@ -185,7 +185,7 @@ var ViewModel = function() {
     // Display the new marker
     marker.setMap(map);
 
-    place.description.subscribe(function(newValue) {
+    place.wikiExtracts.subscribe(function(newValue) {
       infowindow.setContent(self.getInfoWindowContent(this));
     }.bind(place));
 
@@ -204,7 +204,7 @@ var ViewModel = function() {
     "<img src=\"" + place.photo() + "\" alt=\"" + place.name() + "\" style=\"max-width: 100%\">" +
     "</div>" +
     "<div class=\"col-sm-9\">" +
-    place.description() +
+    place.wikiExtracts() +
     "</div>"
     "</div>";
     return contentString;
