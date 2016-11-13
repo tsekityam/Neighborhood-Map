@@ -206,10 +206,30 @@ var ViewModel = function() {
       self.lastOpenedInfoWindow = infowindow;
     });
 
-    marker.addListener('mouseover', function() {
-      self.setMarkerHighlighted(marker, true);
+
+    marker.addListener('click', function() {
+      // Close last opened info window if there is any.
+      if (self.lastOpenedInfoWindow !== undefined) {
+        self.lastOpenedInfoWindow.close();
+      }
+
+      infowindow.open(map, marker);
+
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function() {
+        marker.setAnimation(null);
+      }, 700);
+
+      self.lastOpenedInfoWindow = infowindow;
     });
 
+    marker.addListener('visible_changed', function() {
+      infowindow.close();
+    });
+
+    marker.addListener('mouseover', function() {
+      self.setMarkerHighlighted(marker, false);
+    });
     marker.addListener('mouseout', function() {
       self.setMarkerHighlighted(marker, false);
     });
@@ -227,12 +247,12 @@ var ViewModel = function() {
 
   // show specified marker on the map
   this.showMarker = function(marker) {
-    marker.setMap(map);
+    marker.setVisible(true);
   }
 
   // Hide specified marker from the map
   this.hideMarker = function(marker) {
-    marker.setMap(null);
+    marker.setVisible(false);
   }
 };
 
