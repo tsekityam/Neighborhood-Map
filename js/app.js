@@ -159,10 +159,10 @@ var ViewModel = function() {
     }
 
     if (value === true) {
-      marker.setIcon("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
+      marker.setIcon("https://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
       marker.setZIndex(marker.getZIndex() + 1);
     } else {
-      marker.setIcon("http://maps.google.com/mapfiles/ms/icons/red-dot.png");
+      marker.setIcon("https://maps.google.com/mapfiles/ms/icons/red-dot.png");
       marker.setZIndex(marker.getZIndex() - 1);
     }
   };
@@ -186,7 +186,7 @@ var ViewModel = function() {
       title: title,
       position: position,
       animation: google.maps.Animation.DROP,
-      icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+      icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
       zIndex: 0
     });
 
@@ -243,7 +243,7 @@ var ViewModel = function() {
   this.showInfoWindow = function(place) {
     var marker = self.getMarker(place);
     if (marker !== undefined) {
-      new google.maps.event.trigger(marker, 'click');      
+      new google.maps.event.trigger(marker, 'click');
     }
   };
 

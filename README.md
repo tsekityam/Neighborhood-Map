@@ -4,7 +4,7 @@ Front-End Web Developer Nanodegree Course Project
 ## Credits
 The project depends on or contains codes from the following libraries or projects:
 
-* [Bootstrap](http://getbootstrap.com)
+* [Bootstrap](https://getbootstrap.com)
 * [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/)
 * [jQuery](https://jquery.com)
 * [Knockout](http://knockoutjs.com/)
