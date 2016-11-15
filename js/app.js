@@ -11,6 +11,7 @@ var Place = function(place) {
   this.location = ko.observable({lat: 0, lng: 0});
   this.wikiExtracts = ko.observable("");
   this.photo = ko.observable("");
+  this.icon = ko.observable("");
 
   this.visibility = ko.observable(true);
 
@@ -114,6 +115,7 @@ var ViewModel = function() {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         place.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
         place.photo(results[0].photos[0].getUrl({maxWidth: 300}));
+        place.icon("https://maps.google.com/mapfiles/ms/icons/red-dot.png");
 
         // the id is a flag to indicate that the data are all fetched, so it has to be set at the end of callback.
         place.id(results[0].place_id);
@@ -152,17 +154,28 @@ var ViewModel = function() {
     });
   };
 
-  this.setMarkerHighlighted = function(marker, value) {
+  this.setIconColor = function(place, color) {
+    switch (color) {
+      case "red":
+        place.icon("https://maps.google.com/mapfiles/ms/icons/red-dot.png");
+        break;
+      case "yellow":
+        place.icon("https://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
+        break;
+      default:
+        console.log(color + " is not a valid icon color");
+    }
+  }
+
+  this.moveMarkerToFront = function(marker, value) {
     if (marker === undefined) {
       // do nothing on an undefined marker
       return;
     }
 
     if (value === true) {
-      marker.setIcon("https://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
       marker.setZIndex(marker.getZIndex() + 1);
     } else {
-      marker.setIcon("https://maps.google.com/mapfiles/ms/icons/red-dot.png");
       marker.setZIndex(marker.getZIndex() - 1);
     }
   };
@@ -171,12 +184,14 @@ var ViewModel = function() {
     var id = place.id();
     var title = place.name();
     var position = new google.maps.LatLng(place.location().lat, place.location().lng);  // position should be 0, 0 here.
+    var icon = place.icon();
     var infoWindowContent = place.infoWindowContent();
 
     var infowindow = new google.maps.InfoWindow({
       content: infoWindowContent,
       maxWidth: 600
     });
+
     place.infoWindowContent.subscribe(function(newValue) {
       infowindow.setContent(newValue);
     });
@@ -186,8 +201,12 @@ var ViewModel = function() {
       title: title,
       position: position,
       animation: google.maps.Animation.DROP,
-      icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+      icon: icon,
       zIndex: 0
+    });
+
+    place.icon.subscribe(function (newValue) {
+      marker.setIcon(newValue);
     });
 
     marker.addListener('click', function() {
@@ -205,7 +224,6 @@ var ViewModel = function() {
 
       self.lastOpenedInfoWindow = infowindow;
     });
-
 
     marker.addListener('click', function() {
       // Close last opened info window if there is any.
@@ -228,10 +246,13 @@ var ViewModel = function() {
     });
 
     marker.addListener('mouseover', function() {
-      self.setMarkerHighlighted(marker, true);
+      self.setIconColor(place, "yellow");
+      self.moveMarkerToFront(marker, true);
     });
+
     marker.addListener('mouseout', function() {
-      self.setMarkerHighlighted(marker, false);
+      self.setIconColor(place, "red");
+      self.moveMarkerToFront(marker, false);
     });
 
     // Display the new marker
@@ -279,13 +300,15 @@ function showInfoWindow(place) {
 function highlightMarker(place) {
   var marker = viewModel.getMarker(place);
   if (marker !== undefined) {
-    viewModel.setMarkerHighlighted(marker, true);
+    viewModel.setIconColor(place, "yellow");
+    viewModel.moveMarkerToFront(marker, true);
   }
 };
 
 function undoHighlightMarker(place) {
   var marker = viewModel.getMarker(place);
   if (marker !== undefined) {
-    viewModel.setMarkerHighlighted(marker, false);
+    viewModel.setIconColor(place, "red");
+    viewModel.moveMarkerToFront(marker, false);
   }
 }
