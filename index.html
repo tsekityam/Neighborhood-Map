@@ -32,7 +32,7 @@
         <input type="text" placeholder="Search" class="form-control" data-bind="value:filter, valueUpdate:'input'">
         <!-- The list of neighbourhood -->
         <ul data-bind="foreach: places">
-          <li class="place" data-bind="style: { display: visibility() === true ? 'block' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }">
+          <li class="sidebar-item" data-bind="style: { display: visibility() === true ? 'block' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }">
             <img data-bind="attr: { src: icon }" />
             <span data-bind="text: name, click: showInfoWindow"></span>
           </li>

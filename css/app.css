@@ -19,7 +19,7 @@ html, body {
   overflow-y: scroll;
 }
 
-.place:hover {
+.sidebar-item:hover {
   cursor: pointer;
 }
 
