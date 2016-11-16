@@ -31,12 +31,12 @@
         <!-- The filter -->
         <input type="text" placeholder="Search" class="form-control" data-bind="value:filter, valueUpdate:'input'">
         <!-- The list of neighbourhood -->
-        <ul data-bind="foreach: places">
-          <li class="sidebar-item" data-bind="style: { display: visibility() === true ? 'block' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }">
-            <img data-bind="attr: { src: icon }" />
-            <span data-bind="text: name, click: showInfoWindow"></span>
-          </li>
-        </ul>
+        <table data-bind="foreach: places">
+          <tr class="sidebar-item" data-bind="style: { display: visibility() === true ? 'block' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }">
+            <td><img data-bind="attr: { src: icon }" /></td>
+            <td><span data-bind="text: name, click: showInfoWindow"></span></td>
+          </tr>
+        </table>
       </div>
     </div>
   </div>
