@@ -294,6 +294,7 @@ function initMap() {
 }
 
 function showInfoWindow(place) {
+  $('.row-offcanvas').removeClass('active');
   viewModel.showInfoWindow(place);
 }
 
