@@ -25,7 +25,7 @@ var Place = function(place) {
     "<h3>" + this.name() + "</h3>" +
     "<div>" +
     this.wikiExtracts() +
-    "<p class=\"infowindow-url-wiki\">from <a href=\"" + this.wikiUrl() + "\">Wikipedia</a></p>" +
+    "<p class=\"infowindow-url-wiki\">from <a href=\"" + this.wikiUrl() + "\" target=\"_blank\">Wikipedia</a></p>" +
     "</div>";
     return content;
   }, this);
