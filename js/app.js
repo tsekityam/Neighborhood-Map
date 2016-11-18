@@ -6,10 +6,14 @@ var viewModel;
 var Place = function(place) {
   var self = this;
 
-  this.id = ko.observable("");
+  this.id = ko.observable("");  // the place id of the place in Google Maps
   this.name = ko.observable(place);
   this.location = ko.observable({lat: 0, lng: 0});
   this.wikiExtracts = ko.observable("");
+  this.wikiPageID = ko.observable("");  // the pageid of the place in Wikipedia
+  this.wikiUrl = ko.computed(function() {
+    return "https://en.wikipedia.org/?curid=" + this.wikiPageID();
+  }, this);
   this.photo = ko.observable("");
   this.icon = ko.observable("");
 
@@ -17,13 +21,11 @@ var Place = function(place) {
 
   this.infoWindowContent = ko.computed(function() {
     var content =
-    "<div class=\"row\">" +
-    "<div class=\"col-sm-3\">" +
     "<img src=\"" + this.photo() + "\" alt=\"" + this.name() + "\" style=\"max-width: 100%\">" +
-    "</div>" +
-    "<div class=\"col-sm-9\">" +
+    "<h3>" + this.name() + "</h3>" +
+    "<div>" +
     this.wikiExtracts() +
-    "</div>"
+    "<p class=\"infowindow-url-wiki\">from <a href=\"" + this.wikiUrl() + "\">Wikipedia</a></p>" +
     "</div>";
     return content;
   }, this);
@@ -189,7 +191,7 @@ var ViewModel = function() {
 
     var infowindow = new google.maps.InfoWindow({
       content: infoWindowContent,
-      maxWidth: 600
+      maxWidth: 300
     });
 
     place.infoWindowContent.subscribe(function(newValue) {

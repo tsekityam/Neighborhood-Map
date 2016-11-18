@@ -30,3 +30,7 @@ html, body {
 #map {
   height: 100%;
 }
+
+.infowindow-url-wiki {
+  text-align: right;
+}
