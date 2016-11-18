@@ -50,6 +50,7 @@ var Place = function(place) {
     for (var pageid in pages) {
       if (pages.hasOwnProperty(pageid)) {
         var extract = pages[pageid].extract;
+        self.wikiPageID(pageid);
         if (extract !== undefined) {
           self.wikiExtracts(extract);
           return;
