@@ -20,12 +20,20 @@ var Place = function(place) {
   this.visibility = ko.observable(true);
 
   this.infoWindowContent = ko.computed(function() {
+
+    var wikiUrlElement;
+    if (this.wikiPageID() === "") {
+      wikiUrlElement = "";
+    } else {
+      wikiUrlElement = "<p class=\"infowindow-url-wiki\">from <a href=\"" + this.wikiUrl() + "\" target=\"_blank\">Wikipedia</a></p>";
+    }
+    
     var content =
     "<img src=\"" + this.photo() + "\" alt=\"" + this.name() + "\" style=\"max-width: 100%\">" +
     "<h3>" + this.name() + "</h3>" +
     "<div>" +
     this.wikiExtracts() +
-    "<p class=\"infowindow-url-wiki\">from <a href=\"" + this.wikiUrl() + "\" target=\"_blank\">Wikipedia</a></p>" +
+    wikiUrlElement +
     "</div>";
     return content;
   }, this);
