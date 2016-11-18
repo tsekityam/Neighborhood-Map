@@ -152,7 +152,9 @@ var ViewModel = function() {
     self.places().forEach(function(place){
       var marker = self.getMarker(place);
       if (marker === undefined) {
-        self.updateSinglePlaceInfo(place);
+        setTimeout(function() {
+          self.updateSinglePlaceInfo(place);
+        }, 100 * self.places().indexOf(place));
       }
     });
   };
