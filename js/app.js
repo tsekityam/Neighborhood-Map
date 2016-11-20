@@ -7,8 +7,8 @@ var Place = function(place) {
   var self = this;
 
   this.id = ko.observable('');  // the place id of the place in Google Maps
-  this.name = ko.observable(place);
-  this.location = ko.observable({lat: 0, lng: 0});
+  this.name = place;
+  this.location = {lat: 0, lng: 0};
   this.wikiExtracts = ko.observable('');
   this.wikiPageID = ko.observable('');  // the pageid of the place in Wikipedia
   this.wikiUrl = ko.computed(function() {
@@ -25,7 +25,7 @@ var Place = function(place) {
     if (this.photo() === '') {
       imgElement = '';
     } else {
-      imgElement = '<img src="' + this.photo() + '" alt="' + this.name() + '" style="max-width: 100%">';
+      imgElement = '<img src="' + this.photo() + '" alt="' + this.name + '" style="max-width: 100%">';
     }
 
     var wikiUrlElement;
@@ -37,7 +37,7 @@ var Place = function(place) {
 
     var content =
     imgElement +
-    '<h3>' + this.name() + '</h3>' +
+    '<h3>' + this.name + '</h3>' +
     '<div>' +
     this.wikiExtracts() +
     wikiUrlElement +
@@ -53,7 +53,7 @@ var Place = function(place) {
       format: 'json',
       prop: 'extracts',
       exsentences: '3',
-      titles: self.name()
+      titles: self.name
     }
   }).done(function(result) {
     if (result.query === undefined) {
@@ -73,7 +73,7 @@ var Place = function(place) {
       }
     }
   }).fail(function(error) {
-    console.log('failed to get info of ' + place.name() + ' from Wikipedia');
+    console.log('failed to get info of ' + place.name + ' from Wikipedia');
   });
 };
 
@@ -119,7 +119,7 @@ var ViewModel = function() {
   this.updatePlaceVisibilities = function() {
     var filter = self.filter().toLocaleUpperCase();
     self.places().forEach(function(place) {
-      var name = place.name().toLocaleUpperCase();
+      var name = place.name.toLocaleUpperCase();
       place.visibility(name.includes(filter));
 
       var marker = self.getMarker(place);
@@ -139,7 +139,7 @@ var ViewModel = function() {
       return;
     }
 
-    service.textSearch({query: place.name()}, function(results, status) {
+    service.textSearch({query: place.name}, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         place.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
         if (results[0].hasOwnProperty('photos')) {
@@ -155,7 +155,7 @@ var ViewModel = function() {
           self.updateSinglePlaceInfo(place);
         }, 2000);
       } else {
-        console.log('failed to get info of ' + place.name() + ' from Google Maps');
+        console.log('failed to get info of ' + place.name + ' from Google Maps');
       }
     });
   };
@@ -210,8 +210,8 @@ var ViewModel = function() {
 
   this.addMarker = function(place) {
     var id = place.id();
-    var title = place.name();
-    var position = new google.maps.LatLng(place.location().lat, place.location().lng);  // position should be 0, 0 here.
+    var title = place.name;
+    var position = new google.maps.LatLng(place.location.lat, place.location.lng);  // position should be 0, 0 here.
     var icon = place.icon();
     var infoWindowContent = place.infoWindowContent();
 
