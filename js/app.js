@@ -172,11 +172,6 @@ var ViewModel = function() {
   };
 
   this.updateAllPlaceInfo = function() {
-    // do nothing if Googl Maps API is not ready
-    if (map === undefined) {
-      return;
-    }
-
     self.places().forEach(function(place){
       var marker = self.getMarker(place);
       if (marker === undefined) {
