@@ -71,7 +71,7 @@ var Place = function(place) {
 
         self.description(extract + '<p class="infowindow-url-wiki">from <a href="https://en.wikipedia.org/?curid=' + pageid + ' target="_blank">Wikipedia</a></p>');
 
-        break;
+        return;
       }
     }
 
