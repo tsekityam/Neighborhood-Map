@@ -24,9 +24,9 @@ The project can be build with [gulp.js](http://gulpjs.com)
 
   `$ npm init`
 
-1. Install gulp and plugins in project directory
+1. Install dependencies in project directory
 
-  `$ npm install gulp gulp-cssnano gulp-uglify gulp-useref`
+  `$ npm install`
 
 1. Build project with gulp
 
