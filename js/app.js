@@ -141,7 +141,7 @@ var ViewModel = function() {
 
     service.textSearch({query: place.name}, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
-        place.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
+        place.location = {lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
         if (results[0].hasOwnProperty('photos')) {
           place.photo(results[0].photos[0].getUrl({maxWidth: 300}));
         }
