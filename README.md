@@ -32,7 +32,7 @@ The project can be build with [gulp.js](http://gulpjs.com)
 
   `$ gulp`
 
-The output will be moved to `./docs`
+The output will be moved to `./dist`
 
 ## Credits
 The project depends on or contains codes from the following libraries or projects:

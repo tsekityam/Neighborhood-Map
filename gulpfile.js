@@ -11,10 +11,10 @@ gulp.task('minify', function(){
     .pipe(useref())
     .pipe(gulpIf('*.js', uglify()))
     .pipe(gulpIf('*.css', cssnano()))
-    .pipe(gulp.dest('./docs/'))
+    .pipe(gulp.dest('./dist/'))
 });
 
 gulp.task('copy-json', function(){
   return gulp.src('./*.json')
-    .pipe(gulp.dest('./docs/'))
+    .pipe(gulp.dest('./dist/'))
 });
