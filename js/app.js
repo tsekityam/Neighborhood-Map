@@ -96,7 +96,9 @@ var ViewModel = function() {
       }.bind(place));
       if (map !== undefined) {
         // Google Maps API is ready, lets update place info from Google Maps
-        self.updateSinglePlaceInfo(place);
+        setTimeout(function() {
+          self.updateSinglePlaceInfo(place);
+        }, 100 * self.places().indexOf(place));
       } else {
         // Google Maps library is not loaded yet, the place info will be
         // update after the library is loaded.
