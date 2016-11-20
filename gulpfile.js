@@ -15,6 +15,6 @@ gulp.task('minify', function(){
 });
 
 gulp.task('copy-json', function(){
-  return gulp.src('./*.json')
+  return gulp.src('./places.json')
     .pipe(gulp.dest('./dist/'))
 });
