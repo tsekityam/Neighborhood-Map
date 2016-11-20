@@ -1,6 +1,10 @@
 var map;
 var service;
 
+var redMarker = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png';
+var yellowMarker = 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+var warningMarker = 'https://maps.google.com/mapfiles/kml/pal3/icon33.png';
+
 var viewModel;
 
 var Place = function(place) {
@@ -139,7 +143,7 @@ var ViewModel = function() {
         if (results[0].hasOwnProperty('photos')) {
           place.photo(results[0].photos[0].getUrl({maxWidth: 300}));
         }
-        place.icon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
+        place.icon(redMarker);
 
         // the id is a flag to indicate that the data are all fetched, so it has to be set at the end of callback.
         place.id(results[0].place_id);
@@ -149,7 +153,8 @@ var ViewModel = function() {
           self.updateSinglePlaceInfo(place);
         }, 2000);
       } else {
-        console.log('failed to get info of ' + place.name + ' from Google Maps');
+        place.icon(warningMarker);
+        console.log('Failed to get info of '+ place.name + ' from Google Maps.');
       }
     });
   };
@@ -179,10 +184,10 @@ var ViewModel = function() {
   this.setIconColor = function(place, color) {
     switch (color) {
       case 'red':
-        place.icon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
+        place.icon(redMarker);
         break;
       case 'yellow':
-        place.icon('https://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+        place.icon(yellowMarker);
         break;
       default:
         console.log(color + ' is not a valid icon color');
