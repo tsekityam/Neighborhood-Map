@@ -27,7 +27,7 @@
       </div>
       <div class="col-xs-6 col-sm-3 sidebar sidebar-offcanvas">
         <!-- The filter -->
-        <input type="text" placeholder="Search" class="form-control" data-bind="value:filter, valueUpdate:'input'">
+        <input type="text" placeholder="Search" class="form-control form-control-filter" data-bind="value:filter, valueUpdate:'input'">
         <!-- The list of neighbourhood -->
         <table data-bind="foreach: places">
           <tr class="sidebar-item" data-bind="style: { display: visibility() === true ? 'block' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }">

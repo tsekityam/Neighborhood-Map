@@ -44,11 +44,11 @@ footer {
   }
 
   .row-offcanvas-right.active {
-    right: 50%; /* 6 columns */
+    right: 53%; /* 6 columns */
   }
 
   .row-offcanvas-left.active {
-    left: 50%; /* 6 columns */
+    left: 53%; /* 6 columns */
   }
 
   .sidebar-offcanvas {
