@@ -93,17 +93,17 @@ var ViewModel = function() {
   this.placeToMarkerMappings = [];  // place to marker mappings
 
   this.filter.subscribe(function(newValue) {
-    self.updatePlaceVisibilities()
+    self.updatePlaceVisibilities();
   });
 
   $.ajax({
     url: 'places.json',
     dataType: 'json'
   }).done(function(result) {
-    var places = result.places;
+    var placeNames = result.places;
 
-    places.forEach(function(place) {
-      var place = new Place(place);
+    placeNames.forEach(function(placeName) {
+      var place = new Place(placeName);
       self.places.push(place);
       place.id.subscribe(function() {
         self.addMarker(place);
@@ -201,7 +201,7 @@ var ViewModel = function() {
       default:
         console.log(color + ' is not a valid icon color');
     }
-  }
+  };
 
   this.moveMarkerToFront = function(marker, value) {
     if (marker === undefined) {
@@ -270,19 +270,19 @@ var ViewModel = function() {
   this.showInfoWindow = function(place) {
     var marker = self.getMarker(place);
     if (marker !== undefined) {
-      new google.maps.event.trigger(marker, 'click');
+      google.maps.event.trigger(marker, 'click');
     }
   };
 
   // show specified marker on the map
   this.showMarker = function(marker) {
     marker.setVisible(true);
-  }
+  };
 
   // Hide specified marker from the map
   this.hideMarker = function(marker) {
     marker.setVisible(false);
-  }
+  };
 };
 
 viewModel = new ViewModel();
@@ -313,7 +313,7 @@ function highlightMarker(place) {
     viewModel.setIconColor(place, 'yellow');
     viewModel.moveMarkerToFront(marker, true);
   }
-};
+}
 
 function undoHighlightMarker(place) {
   var marker = viewModel.getMarker(place);
