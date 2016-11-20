@@ -292,6 +292,12 @@ var ViewModel = function() {
     marker.setMap(map);
 
     self.placeToMarkerMappings.push({place: place, marker: marker});
+
+    if (place.visibility() === true) {
+      self.showMarker(marker);
+    } else {
+      self.hideMarker(marker);
+    }
   };
 
   this.showInfoWindow = function(place) {
