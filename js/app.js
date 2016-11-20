@@ -322,3 +322,7 @@ function undoHighlightMarker(place) {
     viewModel.moveMarkerToFront(marker, false);
   }
 }
+
+function showFailedToLoadGoogleMapsAlert() {
+  alert("Failed to load Google Maps");
+}
