@@ -30,7 +30,7 @@
         <input type="text" placeholder="Search" class="form-control form-control-filter" data-bind="value:filter, valueUpdate:'input'">
         <!-- The list of neighbourhood -->
         <table data-bind="foreach: places">
-          <tr class="sidebar-item" data-bind="style: { display: visibility() === true ? 'block' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }">
+          <tr class="sidebar-item" data-bind="style: { display: visibility() === true ? 'block' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }, attr :{ title: tooltip() }" data-toggle="tooltip">
             <td><img data-bind="attr: { src: icon }" /></td>
             <td><span data-bind="text: name, click: showInfoWindow"></span></td>
           </tr>
