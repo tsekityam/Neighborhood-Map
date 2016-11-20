@@ -16,6 +16,15 @@ var Place = function(place) {
   this.description = ko.observable('');
   this.photo = ko.observable('');
   this.icon = ko.observable('');
+  this.tooltip = ko.computed(function () {
+    if (this.id() === '') {
+      if (this.icon() === warningMarker) {
+        return 'Failed to get data from Google Maps';
+      } else {
+        return 'Trying to get data from Google Maps';
+      }
+    }
+  }, this);
 
   this.visibility = ko.observable(true);
 
