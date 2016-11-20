@@ -27,7 +27,7 @@ var Place = function(place) {
     } else {
       wikiUrlElement = "<p class=\"infowindow-url-wiki\">from <a href=\"" + this.wikiUrl() + "\" target=\"_blank\">Wikipedia</a></p>";
     }
-    
+
     var content =
     "<img src=\"" + this.photo() + "\" alt=\"" + this.name() + "\" style=\"max-width: 100%\">" +
     "<h3>" + this.name() + "</h3>" +
