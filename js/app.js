@@ -84,7 +84,8 @@ var ViewModel = function() {
   });
 
   $.ajax({
-    url: 'places.json'
+    url: 'places.json',
+    dataType: 'json'
   }).done(function(result) {
     var places = result.places;
 
