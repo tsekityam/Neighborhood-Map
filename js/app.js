@@ -21,6 +21,13 @@ var Place = function(place) {
 
   this.infoWindowContent = ko.computed(function() {
 
+    var imgElement;
+    if (this.photo() === "") {
+      imgElement = "";
+    } else {
+      imgElement = "<img src=\"" + this.photo() + "\" alt=\"" + this.name() + "\" style=\"max-width: 100%\">";
+    }
+
     var wikiUrlElement;
     if (this.wikiPageID() === "") {
       wikiUrlElement = "";
@@ -29,7 +36,7 @@ var Place = function(place) {
     }
 
     var content =
-    "<img src=\"" + this.photo() + "\" alt=\"" + this.name() + "\" style=\"max-width: 100%\">" +
+    imgElement +
     "<h3>" + this.name() + "</h3>" +
     "<div>" +
     this.wikiExtracts() +
@@ -135,7 +142,9 @@ var ViewModel = function() {
     service.textSearch({query: place.name()}, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         place.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
-        place.photo(results[0].photos[0].getUrl({maxWidth: 300}));
+        if (results[0].hasOwnProperty("photos")) {
+          place.photo(results[0].photos[0].getUrl({maxWidth: 300}));
+        }
         place.icon("https://maps.google.com/mapfiles/ms/icons/red-dot.png");
 
         // the id is a flag to indicate that the data are all fetched, so it has to be set at the end of callback.
