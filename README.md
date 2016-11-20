@@ -37,6 +37,7 @@ The output will be moved to `./docs`
 ## Credits
 The project depends on or contains codes from the following libraries or projects:
 
+* [MediaWiki](https://www.mediawiki.org/)
 * [Bootstrap](https://getbootstrap.com)
 * [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/)
 * [jQuery](https://jquery.com)
