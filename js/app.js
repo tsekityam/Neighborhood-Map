@@ -94,6 +94,14 @@ var ViewModel = function() {
       place.id.subscribe(function() {
         self.addMarker(place);
       }.bind(place));
+      if (map !== undefined) {
+        // Google Maps API is ready, lets update place info from Google Maps
+        self.updateSinglePlaceInfo(place);
+      } else {
+        // Google Maps library is not loaded yet, the place info will be
+        // update after the library is loaded.
+        // See also: initMap()
+      }
     });
   }).fail(function(error) {
     console.log("fail to get places.");
