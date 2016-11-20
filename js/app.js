@@ -6,58 +6,58 @@ var viewModel;
 var Place = function(place) {
   var self = this;
 
-  this.id = ko.observable("");  // the place id of the place in Google Maps
+  this.id = ko.observable('');  // the place id of the place in Google Maps
   this.name = ko.observable(place);
   this.location = ko.observable({lat: 0, lng: 0});
-  this.wikiExtracts = ko.observable("");
-  this.wikiPageID = ko.observable("");  // the pageid of the place in Wikipedia
+  this.wikiExtracts = ko.observable('');
+  this.wikiPageID = ko.observable('');  // the pageid of the place in Wikipedia
   this.wikiUrl = ko.computed(function() {
-    return "https://en.wikipedia.org/?curid=" + this.wikiPageID();
+    return 'https://en.wikipedia.org/?curid=' + this.wikiPageID();
   }, this);
-  this.photo = ko.observable("");
-  this.icon = ko.observable("");
+  this.photo = ko.observable('');
+  this.icon = ko.observable('');
 
   this.visibility = ko.observable(true);
 
   this.infoWindowContent = ko.computed(function() {
 
     var imgElement;
-    if (this.photo() === "") {
-      imgElement = "";
+    if (this.photo() === '') {
+      imgElement = '';
     } else {
-      imgElement = "<img src=\"" + this.photo() + "\" alt=\"" + this.name() + "\" style=\"max-width: 100%\">";
+      imgElement = '<img src="' + this.photo() + '" alt="' + this.name() + '" style="max-width: 100%">';
     }
 
     var wikiUrlElement;
-    if (this.wikiPageID() === "") {
-      wikiUrlElement = "";
+    if (this.wikiPageID() === '') {
+      wikiUrlElement = '';
     } else {
-      wikiUrlElement = "<p class=\"infowindow-url-wiki\">from <a href=\"" + this.wikiUrl() + "\" target=\"_blank\">Wikipedia</a></p>";
+      wikiUrlElement = '<p class="infowindow-url-wiki">from <a href="' + this.wikiUrl() + '" target="_blank">Wikipedia</a></p>';
     }
 
     var content =
     imgElement +
-    "<h3>" + this.name() + "</h3>" +
-    "<div>" +
+    '<h3>' + this.name() + '</h3>' +
+    '<div>' +
     this.wikiExtracts() +
     wikiUrlElement +
-    "</div>";
+    '</div>';
     return content;
   }, this);
 
   $.ajax({
-    url: "https://en.wikipedia.org/w/api.php",
-    dataType: "jsonp",
+    url: 'https://en.wikipedia.org/w/api.php',
+    dataType: 'jsonp',
     data: {
-      action: "query",
-      format: "json",
-      prop: "extracts",
-      exsentences: "3",
+      action: 'query',
+      format: 'json',
+      prop: 'extracts',
+      exsentences: '3',
       titles: self.name()
     }
   }).done(function(result) {
     if (result.query === undefined) {
-      console.log("failed to get info  from wikipedia.");
+      console.log('failed to get info  from wikipedia.');
       return;
     }
 
@@ -73,7 +73,7 @@ var Place = function(place) {
       }
     }
   }).fail(function(error) {
-    console.log("failed to get info of " + place.name() + " from Wikipedia");
+    console.log('failed to get info of ' + place.name() + ' from Wikipedia');
   });
 };
 
@@ -81,7 +81,7 @@ var ViewModel = function() {
   var self = this;
 
   this.places = ko.observableArray([]);
-  this.filter = ko.observable("");
+  this.filter = ko.observable('');
   this.lastOpenedInfoWindow;  // keep track of last opened info window, to ensure that not more than 1 window is opened
 
   this.placeToMarkerMappings = [];  // place to marker mappings
@@ -91,7 +91,7 @@ var ViewModel = function() {
   });
 
   $.ajax({
-    url: "places.json"
+    url: 'places.json'
   }).done(function(result) {
     var places = result.places;
 
@@ -113,7 +113,7 @@ var ViewModel = function() {
       }
     });
   }).fail(function(error) {
-    console.log("failed to load places");
+    console.log('failed to load places');
   });
 
   this.updatePlaceVisibilities = function() {
@@ -134,7 +134,7 @@ var ViewModel = function() {
   };
 
   this.updateSinglePlaceInfo = function(place) {
-    if (place.id() !== "") {
+    if (place.id() !== '') {
       // the place info are ready, no need to get it again
       return;
     }
@@ -142,10 +142,10 @@ var ViewModel = function() {
     service.textSearch({query: place.name()}, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         place.location({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
-        if (results[0].hasOwnProperty("photos")) {
+        if (results[0].hasOwnProperty('photos')) {
           place.photo(results[0].photos[0].getUrl({maxWidth: 300}));
         }
-        place.icon("https://maps.google.com/mapfiles/ms/icons/red-dot.png");
+        place.icon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
 
         // the id is a flag to indicate that the data are all fetched, so it has to be set at the end of callback.
         place.id(results[0].place_id);
@@ -155,7 +155,7 @@ var ViewModel = function() {
           self.updateSinglePlaceInfo(place);
         }, 2000);
       } else {
-        console.log("failed to get info of " + place.name() + " from Google Maps");
+        console.log('failed to get info of ' + place.name() + ' from Google Maps');
       }
     });
   };
@@ -184,14 +184,14 @@ var ViewModel = function() {
 
   this.setIconColor = function(place, color) {
     switch (color) {
-      case "red":
-        place.icon("https://maps.google.com/mapfiles/ms/icons/red-dot.png");
+      case 'red':
+        place.icon('https://maps.google.com/mapfiles/ms/icons/red-dot.png');
         break;
-      case "yellow":
-        place.icon("https://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
+      case 'yellow':
+        place.icon('https://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
         break;
       default:
-        console.log(color + " is not a valid icon color");
+        console.log(color + ' is not a valid icon color');
     }
   }
 
@@ -274,12 +274,12 @@ var ViewModel = function() {
     });
 
     marker.addListener('mouseover', function() {
-      self.setIconColor(place, "yellow");
+      self.setIconColor(place, 'yellow');
       self.moveMarkerToFront(marker, true);
     });
 
     marker.addListener('mouseout', function() {
-      self.setIconColor(place, "red");
+      self.setIconColor(place, 'red');
       self.moveMarkerToFront(marker, false);
     });
 
@@ -335,7 +335,7 @@ function showInfoWindow(place) {
 function highlightMarker(place) {
   var marker = viewModel.getMarker(place);
   if (marker !== undefined) {
-    viewModel.setIconColor(place, "yellow");
+    viewModel.setIconColor(place, 'yellow');
     viewModel.moveMarkerToFront(marker, true);
   }
 };
@@ -343,7 +343,7 @@ function highlightMarker(place) {
 function undoHighlightMarker(place) {
   var marker = viewModel.getMarker(place);
   if (marker !== undefined) {
-    viewModel.setIconColor(place, "red");
+    viewModel.setIconColor(place, 'red');
     viewModel.moveMarkerToFront(marker, false);
   }
 }
