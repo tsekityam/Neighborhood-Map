@@ -107,7 +107,7 @@ var ViewModel = function() {
       }
     });
   }).fail(function(error) {
-    console.log('failed to load places');
+    alert('Failed to get the list of places from server');
   });
 
   this.updatePlaceVisibilities = function() {
