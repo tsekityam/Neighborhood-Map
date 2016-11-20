@@ -143,7 +143,7 @@ var ViewModel = function() {
 
         // the id is a flag to indicate that the data are all fetched, so it has to be set at the end of callback.
         place.id(results[0].place_id);
-      } else if (google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
+      } else if (status === google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
         // wait 2 sec, then try getting data from Google Maps again
         setTimeout(function() {
           self.updateSinglePlaceInfo(place);
