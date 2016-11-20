@@ -9,11 +9,7 @@ var Place = function(place) {
   this.id = ko.observable('');  // the place id of the place in Google Maps
   this.name = place;
   this.location = {lat: 0, lng: 0};
-  this.wikiExtracts = ko.observable('');
-  this.wikiPageID = ko.observable('');  // the pageid of the place in Wikipedia
-  this.wikiUrl = ko.computed(function() {
-    return 'https://en.wikipedia.org/?curid=' + this.wikiPageID();
-  }, this);
+  this.description = ko.observable('');
   this.photo = ko.observable('');
   this.icon = ko.observable('');
 
@@ -28,19 +24,11 @@ var Place = function(place) {
       imgElement = '<img src="' + this.photo() + '" alt="' + this.name + '" style="max-width: 100%">';
     }
 
-    var wikiUrlElement;
-    if (this.wikiPageID() === '') {
-      wikiUrlElement = '';
-    } else {
-      wikiUrlElement = '<p class="infowindow-url-wiki">from <a href="' + this.wikiUrl() + '" target="_blank">Wikipedia</a></p>';
-    }
-
     var content =
     imgElement +
     '<h3>' + this.name + '</h3>' +
     '<div>' +
-    this.wikiExtracts() +
-    wikiUrlElement +
+    this.description() +
     '</div>';
     return content;
   }, this);
@@ -57,7 +45,8 @@ var Place = function(place) {
     }
   }).done(function(result) {
     if (result.query === undefined) {
-      console.log('failed to get info  from wikipedia.');
+      // there is no wikipedia article in the result, which means no article found.
+      self.description('<p>No article related to '+ self.name + ' can be found in Wikipedia.</p>');
       return;
     }
 
@@ -65,15 +54,19 @@ var Place = function(place) {
     for (var pageid in pages) {
       if (pages.hasOwnProperty(pageid)) {
         var extract = pages[pageid].extract;
-        self.wikiPageID(pageid);
-        if (extract !== undefined) {
-          self.wikiExtracts(extract);
-          return;
-        }
+
+        self.description(extract + '<p class="infowindow-url-wiki">from <a href="https://en.wikipedia.org/?curid=' + pageid + ' target="_blank">Wikipedia</a></p>');
+
+        break;
       }
     }
+
+    // there is no wikipedia article in the result, which means no article found.
+    self.description('<p>No article related to '+ self.name + ' can be found in Wikipedia.</p>');
   }).fail(function(error) {
-    console.log('failed to get info of ' + place.name + ' from Wikipedia');
+    var message = 'Failed to get article related to '+ self.name + ' from Wikipedia.';
+    self.description('<p>' + message + '</p>');
+    console.log(message);
   });
 };
 
