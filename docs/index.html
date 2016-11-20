@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <title>Neighborhood Map</title>
+</head>
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="offcanvas">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Neighborhood Map</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container main">
+    <div class="row row-offcanvas row-offcanvas-right main">
+      <div class="col-xs-12 col-sm-9 map-container">
+        <div id="map"></div>
+      </div>
+      <div class="col-xs-6 col-sm-3 sidebar sidebar-offcanvas">
+        <!-- The filter -->
+        <input type="text" placeholder="Search" class="form-control form-control-filter" data-bind="value:filter, valueUpdate:'input'">
+        <!-- The list of neighbourhood -->
+        <table data-bind="foreach: places">
+          <tr class="sidebar-item" data-bind="style: { display: visibility() === true ? 'block' : 'none' }, event: { mouseover: highlightMarker, mouseout: undoHighlightMarker }">
+            <td><img data-bind="attr: { src: icon }" /></td>
+            <td><span data-bind="text: name, click: showInfoWindow"></span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <noscript id="deferred-styles">
+    <link rel="stylesheet" href="css/offcanvas.css">
+    <link rel="stylesheet" href="css/app.css">
+  </noscript>
+  <script>
+    var loadDeferredStyles = function() {
+      var addStylesNode = document.getElementById("deferred-styles");
+      var replacement = document.createElement("div");
+      replacement.innerHTML = addStylesNode.textContent;
+      document.body.appendChild(replacement)
+      addStylesNode.parentElement.removeChild(addStylesNode);
+    };
+    var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+        webkitRequestAnimationFrame || msRequestAnimationFrame;
+    if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+    else window.addEventListener('load', loadDeferredStyles);
+  </script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js" integrity="sha256-ly8TiTtwVsBWdjekTqTJlLGz3Rsg4YXr80eK6QhtdMs=" crossorigin="anonymous"></script>
+  <script async src="js/app.js"></script>
+  <script async defer src="js/offcanvas.js"></script>
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqTI2hnBg2NNWBDfS3VsKYTYbIeWj0SqI&libraries=places&callback=initMap">
+  </script>
+</body>
+</html>
