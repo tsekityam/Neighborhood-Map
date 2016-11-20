@@ -5,7 +5,7 @@ Front-End Web Developer Nanodegree Course Project
 The project can be build with [gulp.js](http://gulpjs.com)
 
 ### Requirements
-1. Node v7.0.0
+1. node: 7.0.0
 
 1. (Optional) A valid Google key with the following API enabled:
   * Google Places API Web Service
@@ -32,7 +32,25 @@ The project can be build with [gulp.js](http://gulpjs.com)
 
   `$ gulp`
 
-The output will be moved to `./dist`
+The output will be moved to `./dist`, and the app can be started by opening `./dist/index.html`.
+
+## How to run it on localhost
+
+### Requirement
+
+python: stable 2.7.12
+
+### Steps
+
+1. Go to `./dist` directory
+
+  `$ cd ./dist`
+
+1. Run the HTTP Server
+
+  `$ python -m SimpleHTTPServer`
+
+The app will now be live at http://localhost:8000
 
 ## Credits
 The project depends on or contains codes from the following libraries or projects:
