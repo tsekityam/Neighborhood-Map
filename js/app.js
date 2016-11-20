@@ -1,5 +1,6 @@
 var map;
 var service;
+var infowindow;
 
 var redMarker = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png';
 var yellowMarker = 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
@@ -88,7 +89,6 @@ var ViewModel = function() {
 
   this.places = ko.observableArray([]);
   this.filter = ko.observable('');
-  this.lastOpenedInfoWindow;  // keep track of last opened info window, to ensure that not more than 1 window is opened
 
   this.placeToMarkerMappings = [];  // place to marker mappings
 
@@ -221,16 +221,6 @@ var ViewModel = function() {
     var title = place.name;
     var position = new google.maps.LatLng(place.location.lat, place.location.lng);  // position should be 0, 0 here.
     var icon = place.icon();
-    var infoWindowContent = place.infoWindowContent();
-
-    var infowindow = new google.maps.InfoWindow({
-      content: infoWindowContent,
-      maxWidth: 300
-    });
-
-    place.infoWindowContent.subscribe(function(newValue) {
-      infowindow.setContent(newValue);
-    });
 
     var marker = new google.maps.Marker({
       id: id,
@@ -246,39 +236,13 @@ var ViewModel = function() {
     });
 
     marker.addListener('click', function() {
-      // Close last opened info window if there is any.
-      if (self.lastOpenedInfoWindow !== undefined) {
-        self.lastOpenedInfoWindow.close();
-      }
-
+      infowindow.setContent(place.infoWindowContent());
       infowindow.open(map, marker);
 
       marker.setAnimation(google.maps.Animation.BOUNCE);
       setTimeout(function() {
         marker.setAnimation(null);
       }, 700);
-
-      self.lastOpenedInfoWindow = infowindow;
-    });
-
-    marker.addListener('click', function() {
-      // Close last opened info window if there is any.
-      if (self.lastOpenedInfoWindow !== undefined) {
-        self.lastOpenedInfoWindow.close();
-      }
-
-      infowindow.open(map, marker);
-
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function() {
-        marker.setAnimation(null);
-      }, 700);
-
-      self.lastOpenedInfoWindow = infowindow;
-    });
-
-    marker.addListener('visible_changed', function() {
-      infowindow.close();
     });
 
     marker.addListener('mouseover', function() {
@@ -331,6 +295,9 @@ function initMap() {
   });
 
   service = new google.maps.places.PlacesService(map);
+  infowindow = new google.maps.InfoWindow({
+    maxWidth: 300
+  });
 
   viewModel.updateAllPlaceInfo();
 }
