@@ -26,7 +26,7 @@ The project can be build with [gulp.js](http://gulpjs.com)
 
 1. Install gulp and plugins in project directory
 
-  `$ npm install gulp gulp-cssnano gulp-uglify gulp-rename`
+  `$ npm install gulp gulp-cssnano gulp-uglify gulp-useref`
 
 1. Build project with gulp
 
