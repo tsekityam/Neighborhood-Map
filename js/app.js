@@ -57,7 +57,7 @@ var Place = function(place) {
     }
   }).done(function(result) {
     if (result.query === undefined) {
-      console.log("fail to get extracts from wikipedia.");
+      console.log("failed to get info  from wikipedia.");
       return;
     }
 
@@ -73,7 +73,7 @@ var Place = function(place) {
       }
     }
   }).fail(function(error) {
-    console.log("fail to get extracts from wikipedia.");
+    console.log("failed to get info of " + place.name() + " from Wikipedia");
   });
 };
 
@@ -113,7 +113,7 @@ var ViewModel = function() {
       }
     });
   }).fail(function(error) {
-    console.log("fail to get places.");
+    console.log("failed to load places");
   });
 
   this.updatePlaceVisibilities = function() {
