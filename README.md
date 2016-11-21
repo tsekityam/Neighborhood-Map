@@ -20,10 +20,6 @@ The project can be build with [gulp.js](http://gulpjs.com)
 
   `$ npm install -g gulp-cli`
 
-1. Initialize project directory
-
-  `$ npm init`
-
 1. Install dependencies in project directory
 
   `$ npm install`
